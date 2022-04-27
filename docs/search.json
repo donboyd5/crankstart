@@ -1,0 +1,44 @@
+[
+  {
+    "objectID": "report.html#introduction",
+    "href": "report.html#introduction",
+    "title": "Payments by the City and County of San Francisco to Nonprofit Organizations",
+    "section": "1 Introduction",
+    "text": "1 Introduction\nNonprofit organizations play an important role in delivering services and helping the needy in San Francisco. This report presents and analyzes information on the city’s payments to nonprofit organizations for the 2020-21 city fiscal year, ending June 30, 2021.1\nThe sections below:\n\nDescribe data on payments to nonprofits,\nList the city departments with greatest payments to nonprofits,\nList the nonprofit organizations that receive the greatest payments,\nPresent a cross-tabulation of payments to major nonprofit organizations by major city departments.\nPresent selected data provided by the Department of Children, Youth & Their Families (DCYF) from its internal systems, to illustrate the kinds of additional information that may be available from agency-by-agency requests.\n\nA companion html document provides tables on payments by all departments and nonprofit organizations, in a sortable format. That document also illustrates details from one internal agency system. An associated Excel file includes the summary tables from this report plus the detailed tables in the companion html file."
+  },
+  {
+    "objectID": "report.html#about-the-data",
+    "href": "report.html#about-the-data",
+    "title": "Payments by the City and County of San Francisco to Nonprofit Organizations",
+    "section": "2 About the Data",
+    "text": "2 About the Data\nThe analysis is based primarily on data maintained centrally by the city controller on payments to external organizations. It also summarizes selected centrally maintained information on contracts. Payments data provide information on actual spending in a specific time period. By contrast, contracts data provide information on planned spending that may occur over multiple years; the contract amount may or may not be fully spent.\nIndividual departments maintain more-detailed data on payments and contracts than data available centrally from the controller. Departments use these data for planning and management purposes.\nThe city publishes its centrally maintained payments data through two main mechanisms. The Open Book portal allows creation of user-friendly reports filtered to restrict the data to specific time periods, departments, and other subsets; it allows downloads of potentially large amounts of data but is not designed primarily for that purpose. The Open Data portal provides for bulk downloads of large data files and other information in computer-friendly formats. While the two publishing mechanisms draw on similar data, the data elements included and time periods covered may differ between Open Book and Open Data.2\nThe city publishes data on payments to external organizations in the Vendor Payments file on Open Data and makes similar user-friendly data available through a Supplier Payments report on Open Book. This is the primary source of data used in this report. The city publishes contracts data through the Supplier Contracts file on Open Data and makes the user-friendly version available through a Supplier Contracts report on Open Book. The Open Book version of the data is far more current and is used here.\nIn addition to data that the city maintains centrally, individual agencies maintain more-detailed data. The Department of Children, Youth, & Families, which has significant contracts with nonprofit organizations, provided detailed information on the funding allocations they make to nonprofit organizations.\nA nonprofit entity as the city defines it in these data must be a 501(c)(3) organization or similar entity, and must have a primary place of business that is a fixed office in San Francisco.\nThis report focuses on grants to nonprofit organizations, rather than all payments to nonprofits."
+  },
+  {
+    "objectID": "report.html#city-departments-with-the-greatest-payments-to-nonprofits",
+    "href": "report.html#city-departments-with-the-greatest-payments-to-nonprofits",
+    "title": "Payments by the City and County of San Francisco to Nonprofit Organizations",
+    "section": "3 City Departments With the Greatest Payments to Nonprofits",
+    "text": "3 City Departments With the Greatest Payments to Nonprofits\nThe following table lists the city departments with the greatest payments to nonprofit organizations in 2020-21. The department names are presented as they are listed in the data file; in some cases they clearly have been abbreviated."
+  },
+  {
+    "objectID": "report.html#nonprofit-organizations-that-receive-the-greatest-payments",
+    "href": "report.html#nonprofit-organizations-that-receive-the-greatest-payments",
+    "title": "Payments by the City and County of San Francisco to Nonprofit Organizations",
+    "section": "4 Nonprofit Organizations That Receive the Greatest Payments",
+    "text": "4 Nonprofit Organizations That Receive the Greatest Payments\nThe following table lists nonprofit organizations with the greatest payments from the city in 2020-21. The organization names are presented as they are listed in the data file; in some cases they clearly have been abbreviated."
+  },
+  {
+    "objectID": "report.html#nonprofit-organizations-with-largest-grant-payments-by-department",
+    "href": "report.html#nonprofit-organizations-with-largest-grant-payments-by-department",
+    "title": "Payments by the City and County of San Francisco to Nonprofit Organizations",
+    "section": "5 NonProfit Organizations With Largest Grant Payments, by Department",
+    "text": "5 NonProfit Organizations With Largest Grant Payments, by Department"
+  },
+  {
+    "objectID": "report.html#appendix",
+    "href": "report.html#appendix",
+    "title": "Payments by the City and County of San Francisco to Nonprofit Organizations",
+    "section": "6 Appendix",
+    "text": "6 Appendix\n\n6.1 All Nonprofit Organizations and All Departments\n\n\n\n\n\n\n\n\n\n\n\n6.2 Department of Children, Youth, & Families Data"
+  }
+]

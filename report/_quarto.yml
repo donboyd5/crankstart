@@ -1,6 +1,6 @@
 project:
   type: site
-  output-dir: docs
+  output-dir: ../docs
   pre-render: pre_render.r
   post-render: post_render.r
 
