@@ -1,0 +1,23 @@
+project:
+  title: test
+  type: site
+  output-dir: _site
+
+toc: true
+toc-title: Contents
+number-sections: true
+
+# language: 
+#   title-block-author-single: "Author"
+#   title-block-published: "Updated"
+
+execute:
+  cache: false
+  echo: false
+  include: false
+  
+format:
+  html:
+    toc-location: left
+    self-contained: true
+    # html-math-method: katex

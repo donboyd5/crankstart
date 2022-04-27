@@ -1,0 +1,28 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*_cache/
+analysis/
+data/
+documentation/
+# do NOT gitignore report/data but put a specific gitignore there
+report/images/
+report/.quarto/
+report/docs/
+report/report_cache/
+report/report_files/
+report/docs/
+report/docs/
+results/
+*.csv
+*.docx
+*.pdf
+*.rdata
+*.rdb
+*.rds
+*.rdx
+# do not globally gitignore xlsx
+.Rdata
+.httr-oauth
+.DS_Store

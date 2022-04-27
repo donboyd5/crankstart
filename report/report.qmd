@@ -1,0 +1,443 @@
+---
+title: "Payments by the City and County of San Francisco to Nonprofit Organizations"
+author: "Don Boyd, Boyd Research LLC"
+date: today
+date-format: long
+---
+
+\pagebreak
+
+## Introduction
+
+Nonprofit organizations play an important role in delivering services and helping the needy in San Francisco. This report presents and analyzes information on the city's payments to nonprofit organizations for the 2020-21 city fiscal year, ending June 30, 2021.[^1]
+
+[^1]: References to "city" mean the city and county of San Francisco.
+
+The sections below:
+
+-   Describe data on payments to nonprofits,
+
+-   List the city departments with greatest payments to nonprofits,
+
+-   List the nonprofit organizations that receive the greatest payments,
+
+-   Present a cross-tabulation of payments to major nonprofit organizations by major city departments.
+
+-   Present selected data provided by the Department of Children, Youth & Their Families (DCYF) from its internal systems, to illustrate the kinds of additional information that may be available from agency-by-agency requests.
+
+A companion html document provides tables on payments by all departments and nonprofit organizations, in a sortable format. That document also illustrates details from one internal agency system. An associated Excel file includes the summary tables from this report plus the detailed tables in the companion html file.
+
+<!-- <div style="page-break-after: always;"></div> -->
+
+<!-- 
+useful links (btw, what is a "markdown div" or html div??)
+https://stackoverflow.com/questions/50455704/full-width-markdown-tables
+https://levelup.gitconnected.com/use-columns-adjust-margins-and-do-more-in-markdown-with-these-simple-pandoc-commands-adb4c19f9f35
+
+-->
+
+## About the Data
+
+The analysis is based primarily on data maintained centrally by the city controller on payments to external organizations. It also summarizes selected centrally maintained information on contracts. Payments data provide information on actual spending in a specific time period. By contrast, contracts data provide information on planned spending that may occur over multiple years; the contract amount may or may not be fully spent.
+
+Individual departments maintain more-detailed data on payments and contracts than data available centrally from the controller. Departments use these data for planning and management purposes.
+
+The city publishes its centrally maintained payments data through two main mechanisms. The [Open Book](https://openbook-report.sfgov.org/OBMiddleware/report.aspx) portal allows creation of user-friendly reports filtered to restrict the data to specific time periods, departments, and other subsets; it allows downloads of potentially large amounts of data but is not designed primarily for that purpose. The [Open Data](https://data.sfgov.org/) portal provides for bulk downloads of large data files and other information in computer-friendly formats. While the two publishing mechanisms draw on similar data, the data elements included and time periods covered may differ between *Open Book* and *Open Data*.[^2]
+
+[^2]: I brought several such differences to the attention of staff maintaining these data systems and they are working to correct them and develop greater internal consistency. As of this writing, they have not updated their data online to reflect these changes.
+
+The city publishes data on payments to external organizations in the [Vendor Payments file](https://data.sfgov.org/City-Management-and-Ethics/Vendor-Payments-Vouchers-/n9pm-xkyq) on *Open Data* and makes similar user-friendly data available through a [Supplier Payments report](https://openbook-report.sfgov.org/OBMiddleware/report.aspx?reportname=5) on *Open Book*. This is the primary source of data used in this report. The city publishes *contracts* data through the [Supplier Contracts file](https://data.sfgov.org/City-Management-and-Ethics/Supplier-Contracts/cqi5-hm2d) on *Open Data* and makes the user-friendly version available through a [Supplier Contracts report](https://openbook-report.sfgov.org/OBMiddleware/report.aspx?reportname=4) on *Open Book*. The *Open Book* version of the data is far more current and is used here.
+
+In addition to data that the city maintains centrally, individual agencies maintain more-detailed data. The Department of Children, Youth, & Families, which has significant contracts with nonprofit organizations, provided detailed information on the funding allocations they make to nonprofit organizations.
+
+A nonprofit entity [as the city defines it](https://sfgov.org/cmd/sites/default/files/FileCenter/Documents/9818-NPE%20Certification.pdf) in these data must be a 501(c)(3) organization or similar entity, and must have a primary place of business that is a fixed office in San Francisco.
+
+This report focuses on grants to nonprofit organizations, rather than all payments to nonprofits.
+
+```{r libraries}
+source(here::here("r", "libraries.r"))
+
+# options(gt.html_tag_check = FALSE)
+
+```
+
+```{r functions}
+source(here::here("r", "functions.r"))
+
+gtsave2 <- function(tab, fpath, zoom=2, expand=5, vwidth=992, vheight=744){
+  gtlist <- list()
+  gtlist$tab <- tab
+  gtlist$fpath <- fpath
+  gtlist$zoom <- zoom
+  gtlist$expand <- expand
+  gtlist$vwidth <- vwidth
+  gtlist$vheight <- vheight
+  
+  saveRDS(gtlist, "gtlist.rds")
+  # print(gtlist)
+  source("gtsave2.r")
+}
+
+```
+
+
+## City Departments With the Greatest Payments to Nonprofits
+
+The following table lists the city departments with the greatest payments to nonprofit organizations in 2020-21. The department names are presented as they are listed in the data file; in some cases they clearly have been abbreviated.
+
+
+```{r tab_topdepts}
+#| include: true
+#| rows.print: 20
+
+deptsort <- readRDS(here::here("report", "data", "deptsort.rds"))
+
+# define number depts and number nonprofits to include, before all other
+ndepts <- 20
+
+# create a topn data frame
+topndepts <- deptsort %>%
+  select(deptcode, trimname, paid) %>%
+  arrange(desc(paid)) %>%
+  mutate(rank=ifelse(row_number() <= ndepts, row_number(), NA_real_),
+         deptcode=ifelse(row_number() <= ndepts, deptcode, NA_character_),
+         trimname=ifelse(row_number() <= ndepts, trimname, "All other")) %>%
+  group_by(rank, deptcode, trimname) %>%
+  summarise(paid=sum(paid), .groups = "drop") %>%
+  mutate(paidpct=paid / sum(paid),
+         cumpct=cumsum(paidpct))
+
+tabsums <- topndepts %>%
+  summarise(paid=sum(paid), paidpct=sum(paidpct)) %>%
+  mutate(cumpct=paidpct, 
+         deptcode=NA_character_,
+         trimname="Total")
+
+tabdata <- bind_rows(topndepts, tabsums)
+saveRDS(tabdata, here::here("report", "data", "topndepts.rds"))
+
+tab <- tabdata %>%
+  gt() %>%
+  cols_hide(deptcode) %>%
+  tab_header(
+    title = paste0("Top ",  
+                   label_comma(accuracy=1)(ndepts), 
+                   " City Departments, Payments to Nonprofit Organizations in 2020-21"),
+    subtitle = "Payments under grant contracts"
+    ) %>%
+  cols_label(rank="Rank",
+             trimname="Department" ,
+             paid=("Payment (dollars)"),
+             paidpct=html("Percent of all grant payments"),
+             cumpct=html("Cumulative percent")) %>%
+  cols_align(
+    align = c("left"),
+    columns = trimname) %>%
+  fmt_number(
+    columns=c(rank, paid),
+    scale_by = 1,
+    decimals=0
+  ) %>%
+  fmt_currency(
+    rows=c(1, nrow(tabdata)),
+    columns=c(paid),
+    scale_by = 1,
+    decimals=0
+  ) %>%
+  fmt_percent(
+    columns = c(paidpct, cumpct),
+    decimals = 1) %>%
+  fmt_missing(columns = c(rank, deptcode), missing_text = "") %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "grey95")
+      ),
+    locations = cells_body(
+      rows=is.even(1:nrow(tabdata))
+      )
+    )
+# tab
+
+gtsave2(tab, here::here("report", "images", paste0("tab_topdepts.png")), zoom=2, expand=5)
+
+```
+
+
+![](images\tab_topdepts.png){ width=100% }
+
+
+## Nonprofit Organizations That Receive the Greatest Payments
+
+The following table lists nonprofit organizations with the greatest payments from the city in 2020-21. The organization names are presented as they are listed in the data file; in some cases they clearly have been abbreviated.
+
+```{r tab_topnpes}
+#| eval: true
+#| include: true
+#| rows.print: 20
+
+npesort <- readRDS(here::here("report", "data", "npesort.rds"))
+
+# define number depts and number nonprofits to include, before all other
+nnpes <- 30
+
+# create a topn data frame
+topnpes <- npesort %>%
+  select(supplier, paid) %>%
+  arrange(desc(paid)) %>%
+  mutate(rank=ifelse(row_number() <= nnpes, row_number(), NA_real_),
+         supplier=ifelse(row_number() <= nnpes, supplier, "All other")) %>%
+  group_by(rank, supplier) %>%
+  summarise(paid=sum(paid), .groups = "drop") %>%
+  mutate(paidpct=paid / sum(paid),
+         cumpct=cumsum(paidpct))
+
+tabsums <- topnpes %>%
+  summarise(paid=sum(paid), paidpct=sum(paidpct)) %>%
+  mutate(cumpct=paidpct, supplier="Total")
+
+tabdata <- bind_rows(topnpes, tabsums)
+saveRDS(tabdata, here::here("report", "data", "topnpes.rds"))
+
+tab <- tabdata %>%
+  gt() %>%
+  tab_header(
+    title = paste0("Top ",  
+                   label_comma(accuracy=1)(nnpes), 
+                   " Nonprofit Organizations Receiving Payments in 2020-21"),
+    subtitle = "Payments under grant contracts"
+    ) %>%
+  cols_label(rank="Rank",
+             supplier="Nonprofit entity" ,
+             paid=("Payment (dollars)"),
+             paidpct=html("Percent of all grant payments"),
+             cumpct=html("Cumulative percent")) %>%
+  cols_align(
+    align = c("left"),
+    columns = supplier) %>%
+  fmt_number(
+    columns=c(rank, paid),
+    scale_by = 1,
+    decimals=0
+  ) %>%
+  fmt_currency(
+    rows=c(1, nrow(tabdata)),
+    columns=c(paid),
+    scale_by = 1,
+    decimals=0
+  ) %>%
+  fmt_percent(
+    columns = c(paidpct, cumpct),
+    decimals = 1) %>%
+  fmt_missing(columns = c(rank), missing_text = "") %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "grey95")
+      ),
+    locations = cells_body(
+      rows=is.even(1:nrow(tabdata))
+      )
+    )
+# tab
+
+gtsave2(tab, here::here("report", "images", paste0("tab_topnpes.png")),
+         zoom=2, expand=5)
+
+# f <- label_number(accuracy=.1)
+# f(12.3216)
+# label_number(accuracy=.1)(12.32)
+# label_comma(accuracy=.1)(124567.32)
+# quarto render --cache-refresh --to html
+#  !(images/tab_topnpes.png)
+
+```
+
+![](images\tab_topnpes.png){ width=100% }
+
+
+## NonProfit Organizations With Largest Grant Payments, by Department
+
+```{r tab_topnpe_bydept}
+#| eval: true
+#| include: true
+# #| column: screen-inset-right
+# #| column: screen  # page screen
+#| rows.print: 40
+
+npedeptsort <- readRDS(here::here("report", "data", "npedeptsort.rds"))
+
+# define number depts and number nonprofits to include, before all other
+ndepts <- 10
+nnpes <- 30
+
+# create a topn data frame
+topnpesdepts <- npedeptsort %>%
+  select(trimname, supplier, paid, deptrank, nperank) %>%
+  mutate(deptrank=ifelse(deptrank > ndepts, 1e9, deptrank),
+         trimname=ifelse(deptrank > ndepts, "All other", trimname),
+         nperank=ifelse(nperank > nnpes, 1e9, nperank),
+         supplier=ifelse(nperank > nnpes, "All other", supplier)) %>%
+  group_by(deptrank, trimname, nperank, supplier) %>%
+  summarise(paid=sum(paid), .groups = "drop")
+
+deptsums <- topnpesdepts %>%
+  group_by(trimname) %>%
+  summarise(paid=sum(paid, na.rm=TRUE), .groups="drop") %>%
+  mutate(nperank=2e9, supplier="Total")
+
+npesums <- topnpesdepts %>%
+  group_by(nperank, supplier) %>%
+  summarise(paid=sum(paid, na.rm=TRUE), .groups="drop") %>%
+  mutate(trimname="Total")
+
+allsums <- deptsums %>%
+  summarise(paid=sum(paid, na.rm=TRUE), .groups="drop") %>%
+  mutate(nperank=2e9, supplier="Total", trimname="Total")
+  
+
+tabdata_long <- bind_rows(topnpesdepts, deptsums, npesums, allsums)
+
+tabdata <- tabdata_long %>%
+  select(trimname, nperank, supplier, paid) %>%
+  pivot_wider(names_from = trimname, values_from = paid) %>%
+  arrange(nperank) %>%
+  mutate(nperank=ifelse(nperank > nnpes, NA_real_, nperank))
+
+saveRDS(tabdata, here::here("report", "data", "topnpesdepts.rds"))
+
+tab <- tabdata %>%
+  gt() %>%
+  tab_header(
+    title = paste0("Top ",  
+                   label_comma(accuracy=1)(nnpes), 
+                   " Nonprofit Organizations Receiving Payments in 2020-21, by Department"),
+    subtitle = "Payments under grant contracts"
+    ) %>%
+  cols_label(nperank="Rank",
+             supplier="Nonprofit entity") %>%
+  cols_align(
+    align = c("left"),
+    columns = supplier) %>%
+  fmt_number(
+    columns=c(1, 3:ncol(tabdata)),
+    scale_by = 1,
+    decimals=0
+  ) %>%
+  fmt_currency(
+    rows=c(1, nrow(tabdata)),
+    columns=3:ncol(tabdata),
+    scale_by = 1,
+    decimals=0
+  ) %>%
+  fmt_missing(columns = everything(), missing_text = "--") %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "grey95")
+      ),
+    locations = cells_body(
+      rows=is.even(1:nrow(tabdata))
+      )
+    )
+# tab
+# tab_html <- tab %>% 
+#   as_raw_html()
+
+# savetab(basename, .tab=tab, .tabdata=tabdata, zoom=2, expand=5)
+# savetab("tab_topdepts")
+gtsave2(tab, here::here("report", "images", paste0("tab_topnpe_bydept.png")),
+         zoom=1, expand=5, vwidth=4000)
+
+# f <- label_number(accuracy=.1)
+# f(12.3216)
+# label_number(accuracy=.1)(12.32)
+# label_comma(accuracy=.1)(124567.32)
+# quarto render --cache-refresh --to html
+#  !(images/tab_topnpes.png)
+
+# zoom=2, expand=5
+# vwidth = 992,
+# vheight = 744,
+
+```
+
+
+\blandscape
+::: {.column height=200% width="200%"}
+![](images\tab_topnpe_bydept.png){height=100% width=95% }
+:::
+\elandscape
+
+
+
+## Appendix
+
+
+### All Nonprofit Organizations and All Departments
+
+<!-- :::{style="width: 1400px; height:auto; margin: auto; font-size: 8pt;"} -->
+:::{style="width: 150%; height:auto; margin: auto; font-size: 8pt;"}
+
+
+```{r}
+#| include: true
+#| echo: false
+# #| column: screen-inset-right
+# #| column: screen-right
+
+tabdata <- readRDS(here::here("report", "data", "npedept_wide.rds"))
+
+tab <- datatable(tabdata,
+                 rownames=FALSE,
+                 filter = "top", 
+                 extensions = c("Buttons","FixedColumns"),
+                 options=list(pageLength = 15, 
+                              autoWidth = TRUE,
+                              scrollX = TRUE,
+                              fixedColumns = list(leftColumns = 2),
+                              columnDefs = list(
+                                list(width = '220px', targets = 1)))
+                 ) %>% 
+  formatCurrency(c(3:ncol(tabdata)), digits=0)
+
+tab
+
+```
+
+:::
+
+
+### Department of Children, Youth, & Families Data
+
+
+:::{style="width: 150%; height:auto; margin: auto; font-size: 8pt;"}
+
+```{r}
+#| include: true
+#| echo: false
+# #| column: screen-inset-right
+# #| column: screen-right
+
+dcyf <- readRDS(here::here("report", "data", "dcyf_wide.rds"))
+
+tab <- 
+  datatable(dcyf,
+            rownames=FALSE,
+            colnames=c("service area" = 4),
+            filter = "top", 
+            extensions = c("Buttons","FixedColumns"),
+            options=list(pageLength = 10, 
+                         autoWidth = TRUE,
+                         scrollX = TRUE,
+                         columnDefs = list(
+                           list(width = '75px', targets = c(0:4, 6:7))))
+            ) %>% 
+  formatCurrency(c(7:8), digits=0)
+
+# ,                           list(width = '300px', targets = 6)
+
+tab
+
+```
+
+:::
+
+<!-- </div> -->

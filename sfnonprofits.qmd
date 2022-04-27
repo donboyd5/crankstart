@@ -1,0 +1,747 @@
+---
+title: "Analysis of San Francisco Nonprofits for Crankstart Management LLC"
+author: "Don Boyd, Boyd Research LLC"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+number-sections: true
+number-depth: 3
+execute:
+  cache: true
+format:
+  html:
+    
+    toc: true
+    html-math-method: katex
+    theme: cosmo
+editor_options:
+  chunk_output_type: console
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+    # df_print: paged
+    # fig_height: 6
+    # fig_width: 8
+
+# execute:
+#   cache: true
+#   eval: true
+#   echo: false
+#   include: false
+#   output: false
+#   message: false
+#   warning: false
+
+# https://quarto.org/docs/guide/
+# https://quarto.org/docs/reference/
+# https://quarto.org/docs/tools/rstudio.html
+# https://quarto.org/docs/projects/code-execution.html
+# https://github.com/quarto-dev/quarto-cli/discussions
+
+# knitr::opts_chunk$set(include=FALSE, 
+#                       eval=TRUE,
+#                       echo=FALSE, 
+#                       message = FALSE, 
+#                       warning = FALSE)
+
+# opts_chunk is a merger of local options and default options
+# opts_current is the current chunk's options - from within any given chunk
+# knitr::opts_chunk$get()  # copy to console to get proper list of options
+# knitr::opts_current$get()
+# str(knitr::opts_chunk$get()) # for a list of default chunk options.
+
+
+# html_document:
+#   toc: yes
+#   toc_depth: '3'
+#   df_print: paged
+
+# From terminal:
+# quarto create-project   gives:
+# Creating project at C:\Users\donbo\Documents\R_projects\crankstart:
+#   - Created _quarto.yml
+#   - Created .gitignore
+#   - Created crankstart.qmd
+
+```
+
+# Project requirements
+
+## Goals
+
+-   Obtain, analyze, summarize, and provide data on what the city-county of San Francisco paid to nonprofit organizations in the most recent year for which suitable data are available.
+
+-   Deliver data on individual nonprofit organizations as well as data summarized by department, and to the extent data allow, by type of activity, type of nonprofit, and other categorizations that may be useful.
+
+## Deliverables
+
+-   A 5-10 page white paper that describes San Francisco spending on nonprofits, summarizes that spending, provides a high-level summary table, and explains how the data are defined and what they mean. The high-level summary table might, for example, (1) have 12 rows, listing individually the 10 nonprofits that received the largest payments, an all-other category, and a total row, and (2) have 7 columns for the 5 departments with the largest such payments, an all-other column, and a total.
+
+-   An easy-to-navigate html file that has additional details. It would have a hyperlinked table of contents and might have tabbed output. It could summarize or categorize contracts in different ways. It could have a section for each of the 10 largest nonprofits listing each of the contracts they have, the stated purpose of each contract, and its amount.
+
+-   An Excel spreadsheet that has a row for each nonprofit organization and a column for each department, with cells consisting of payment amounts or possibly contract amounts (or possibly a sheet with each).
+
+## Key dates
+
+-   March 16 (Wed): Contract start date
+
+-   March 24 (Thurs; moved from March 23): Preliminary go/no-go email note
+
+-   April 27 (Wed): Draft deliverables
+
+-   May 11 (Wed): Final deliverables and contract end date
+
+# Introduction
+
+```{r rmarkdown}
+#| include: false
+# https://www.andreashandel.com/posts/word-formatting-rmarkdown/
+# https://bookdown.org/yihui/rmarkdown-cookbook/word-template.html
+# https://drmowinckels.io/blog/2021-12-17-rmarkdown-child-templates/
+# https://quarto.org/docs/computations/execution-options.html
+
+```
+
+```{r libraries}
+#| include: false
+source(here::here("r", "libraries.r"))
+
+```
+
+```{r constants}
+#| include: false
+
+```
+
+```{r functions}
+#| include: false
+source(here::here("r", "functions.r"))
+```
+
+```{r getdata}
+#| include: false
+# check for updates:
+# https://data.sfgov.org/City-Management-and-Ethics/Supplier-Contracts/cqi5-hm2d  contracts
+# https://data.sfgov.org/City-Management-and-Ethics/Vendor-Payments-Vouchers-/n9pm-xkyq payments
+
+# proposals <- readRDS(here::here("data", "proposals.rds"))
+# nparties <- readRDS(here::here("data", "nparties.rds"))
+# contracts <- readRDS(here::here("data", "contracts.rds"))
+# vpayments <- readRDS(here::here("data", "vpayments.rds"))
+# vpaypo <- readRDS(here::here("data", "vpaypo.rds"))
+# commodities <- readRDS(here::here("data", "commodities.rds"))
+
+rcontracts <- readRDS(here::here("data", "rcontracts.rds"))
+rvpayments <- readRDS(here::here("data", "rvpayments.rds"))
+
+```
+
+# About the data
+
+```{r child="text.Rmd"}
+```
+
+Definition of nonprofits
+
+City controller's data on contracts
+
+City controller's data on payments
+
+Agency data systems
+
+# Summary of payments to nonprofits
+
+```{r}
+#| include: false
+# identify contracts of interest
+glimpse(rcontracts)
+
+conbase1 <- rcontracts %>%
+  filter(nonprofit=="X",
+         startdate <= "2021-06-30",
+         enddate >= "2020-07-01") %>%
+  mutate(grant=ifelse(
+    str_detect(ctype, coll("GRANT", ignore_case = TRUE)),
+    "grant",
+    "nongrant"))
+
+gng <- conbase1 %>%
+  group_by(grant, purchauth, ctype) %>%
+  summarise(n=n(), .groups="drop")
+
+gng %>%
+  filter(grant=="grant", !str_detect(purchauth, "GRANT")) %>%
+  arrange(desc(n)) %>%
+  select(purchauth, n)
+
+gng %>%
+  filter(grant!="grant", str_detect(purchauth, "GRANT")) %>%
+  arrange(desc(n)) %>%
+  select(ctype, purchauth, n)
+
+
+
+check <- conbase1 %>%
+  filter(grant=="grant", str_detect(purchauth, "PROFSERV")) %>%
+  select(cnum, ctitle, deptname, supplier, amt_award) %>%
+  arrange(desc(amt_award)) %>%
+  top_n(3)
+
+check <- conbase1 %>%
+  filter(grant!="grant", str_detect(purchauth, "GRANT")) %>%
+  select(cnum, ctitle, deptname, ctype, supplier, amt_award) %>%
+  arrange(desc(amt_award)) %>%
+  top_n(3)
+
+
+# CAUTION: This definition of grant excludes situations such as:
+#   purchauth: AUTHORIZED BY GRANT - NOT PURCHASING AUTHORITY, and ctype: Professional Services - Chapter 6
+#   purchauth: AUTHORIZED BY GRANT - NOT PURCHASING AUTHORITY, and ctype: Purchasing Contract
+
+count(conbase1, purchauth)
+# AUTHORIZED BY GRANT - NOT PURCHASING AUTHORITY	1976
+# GRANTS ONLY - COMPETITIVE BID	635
+# GRANTS ONLY - NO BID	4
+# GRANTS ONLY - NO BID - EMERGENCY PROCUREMENT	52
+# Unspecified	6
+
+conbase2 <- conbase1
+count(conbase2, scope, sort=TRUE)
+
+check <- count(conbase2, grant, purchauth, ctype, sort = TRUE)
+# Grant Contracts (City as Grantor, previously named ‘Grants’)	2645		
+# Professional Services - Chapter 6	21		
+# Purchasing Contract	1	
+
+conbase <- conbase2 %>%
+  select(-scope) # scope is not useful
+
+# conbase %>%
+#   filter(prime != supplier) # none
+
+
+```
+
+```{r}
+#| include: false
+
+# ns(vpayments) # does not have contract number
+ns(rvpayments)
+
+paybase1 <- rvpayments  %>% 
+  filter(year==2021, nonprofit=="X", paid!=0) %>%
+  left_join(conbase %>%
+              select(cnum, supplier, lbe, purchauth, grant, amt_award) %>%
+              mutate(incontracts=TRUE),
+            by=c("cnum", "supplier")) %>%
+  mutate(grant=ifelse(is.na(incontracts), "nocontract", grant)) %>%
+  select(-incontracts)
+count(paybase1, grant)
+
+# check <- paybase1 %>% filter(!incontracts)
+# paybase1 %>%
+#   mutate(cnumna=ifelse(is.na(cnum), TRUE, FALSE)) %>%
+#   count(cnumna, incontracts)
+
+count(paybase1, grant)
+
+# check <- paybase1 %>%
+#   filter(!incontracts, !is.na(cnum))
+
+# check2 <- check %>%
+#   filter(deptcode=="CHF")
+
+con <- "1000009548"  # weird - this contract is in the payments file but not in either contracts file
+# contracts %>% filter(cnum==con)
+rcontracts %>% filter(cnum==con)
+
+paybase <- paybase1
+
+
+```
+
+```{r topdepts}
+#| include: false
+
+# glimpse(rvpayments)
+# rcontracts %>% filter(cnum=="1000007041")
+
+# define number depts and number nonprofits to include, before all other
+ndepts <- 10
+nnpe <- 10
+
+count(paybase, type, sort = TRUE)
+count(paybase, prodcat, sort = TRUE)
+
+deptsort <- paybase %>%
+  group_by(deptname, grant) %>%
+  summarise(paid=sum(paid, na.rm=TRUE), .groups="drop") %>%
+  pivot_wider(names_from = grant, values_from = paid, values_fill = 0) %>%
+  mutate(total=nocontract + grant + nongrant) %>%
+  arrange(desc(total)) %>%
+  mutate(totrank=row_number(),
+         totpct=total / sum(total, na.rm=TRUE),
+         totcumpct=cumsum(totpct)) %>%
+  arrange(desc(grant)) %>%
+  mutate(grantrank=row_number(),
+         grantpct=grant / sum(grant, na.rm=TRUE),
+         grantcumpct=cumsum(grantpct))
+  
+  
+```
+
+```{r topnpes}
+#| include: false
+# define number nonprofits to include, before all other
+nnpe <- 10
+
+count(paybase, type, sort = TRUE)
+count(paybase, prodcat, sort = TRUE)
+
+npesort <- paybase %>%
+  group_by(supplier, grant) %>%
+  summarise(paid=sum(paid, na.rm=TRUE), .groups="drop") %>%
+  pivot_wider(names_from = grant, values_from = paid, values_fill = 0) %>%
+  mutate(total=nocontract + grant + nongrant) %>%
+  arrange(desc(total)) %>%
+  mutate(totrank=row_number(),
+         totpct=total / sum(total, na.rm=TRUE),
+         totcumpct=cumsum(totpct)) %>%
+  arrange(desc(grant)) %>%
+  mutate(grantrank=row_number(),
+         grantpct=grant / sum(grant, na.rm=TRUE),
+         grantcumpct=cumsum(grantpct))
+
+# Large-grant  NPEs
+# https://www.childrenscouncil.org/
+# Children's Council's Mission By advocating for quality early care and education, empowering families with information and financial support, and building the capabilities of educators, we ensure that every child in San Francisco has the opportunity to reach their full potential.
+
+# https://www.sfihsspa.org/
+# The San Francisco IHSS Public Authority (The PA) connects low income seniors and people with disabilities to qualified IHSS providers, so they may live healthier, happier and safer lives at home and engaged in the community.
+
+# https://ecs-sf.org/
+# Episcopal Community Services of San Francisco (ECS) helps homeless and very low-income people every day and every night obtain the housing, jobs, shelter, and essential services each person needs to prevent and end homelessness.
+
+# https://www.thclinic.org/
+# The mission of the Tenderloin Housing Clinic (THC) is to prevent tenant displacement, to preserve and expand the City's low cost housing stock, and to provide comprehensive legal assistance to low income tenants. THC is successful in fulfilling this mission by providing free legal services, securing SRO units through the Master Lease program and offering comprehensive support services to our clients.
+
+# https://www.fivekeyscharter.org/
+# Through the use of social and restorative justice principles, Five Keys provides traditionally underserved communities the opportunity to improve their lives through a focus on the Five Keys: EDUCATION, EMPLOYMENT, RECOVERY, FAMILY, COMMUNITY.
+
+
+```
+
+# Tables
+
+## Top departments
+
+```{r tab_topdepts}
+#| include: true
+#| echo: false
+# ns(deptsort)
+tabdata <- deptsort %>%
+  filter(grant > 0) %>%
+  select(deptname, grantrank, grant, grantpct, grantcumpct) %>%
+  mutate(deptname=str_sub(deptname, 4, -1))
+
+datatable(tabdata,
+          filter = 'top') %>% 
+  formatCurrency(c("grant"), digits=0) %>% 
+  formatPercentage(c("grantpct", "grantcumpct"), digits=1)
+
+```
+
+## Top nonprofits
+
+```{r tab_topnpes, include=TRUE}
+#| include: true
+#| echo: false
+# ns(npesort)
+tabdata <- npesort %>%
+  filter(grant > 0) %>%
+  select(supplier, grantrank, grant, grantpct, grantcumpct)
+
+datatable(tabdata,
+          filter = 'top') %>% 
+  formatCurrency(c("grant"), digits=0) %>% 
+  formatPercentage(c("grantpct", "grantcumpct"), digits=1)
+
+```
+
+## Summary crosstab
+
+<!-- <div style = "font-size: 75%; width: 75%"> -->
+
+<!-- <p style = "font-size: 75%; width: 75%"> -->
+
+<!-- <p style = "font-size:2> -->
+
+<font size="2">
+
+<!-- <p style="font-family: times, serif; font-size:8px; font-style:italic"> -->
+
+<!--     Why did we use these specific parameters during the calculation of the fingerprints? -->
+
+<!-- p {font-size: 0.5em; /* 14px/16=0.875em */ -->
+
+<!-- \tiny -->
+
+<!-- ```{css, echo=FALSE} -->
+
+<!-- p { -->
+
+<!--   font-size: 6px; -->
+
+<!-- } -->
+
+<!-- ``` -->
+
+<!-- <span style="font-size: 9px;">text</span> -->
+
+<!-- <span style="font-size: 4px;"> -->
+
+```{r tab_crosstab}
+#| include: true
+#| echo: false
+#| column: screen-right
+#| fig-width: 8
+
+# #| column: screen  # page screen
+# glimpse(paybase)
+topdept <- 8
+topnpe <- 98
+
+tabdata1 <- paybase %>% 
+  filter(paid > 0, grant=="grant") %>% 
+  left_join(deptsort %>% 
+              select(deptname, deptrank=grantrank), by = "deptname") %>% 
+  left_join(npesort %>% 
+              select(supplier, nperank=grantrank), by = "supplier") %>% 
+  mutate(deptrank=ifelse(deptrank > topdept, 1e6, deptrank),
+         nperank=ifelse(nperank > topnpe, 1e6, nperank),
+         deptname=ifelse(deptrank > topdept, "All other", deptname),
+         supplier=ifelse(nperank > topnpe, "All other", supplier)) %>% 
+  group_by(deptrank, nperank, deptname, supplier) %>%
+  summarise(paid=sum(paid), .groups="drop")
+  
+tabdata2 <- tabdata1 %>% 
+  arrange(deptrank, nperank) %>% 
+  select(-deptrank) %>% 
+  pivot_wider(names_from = deptname,
+              values_from = paid,
+              values_fill = 0) %>% 
+  arrange(nperank)
+
+# add totals row!!
+tabdata3 <- tabdata2 %>% 
+  rowwise() %>% 
+  mutate(total = sum(c_across(-c(nperank, supplier)), na.rm=TRUE)) %>% 
+  ungroup()
+
+tabsums <- tabdata3 %>% 
+  summarise(across(-c(nperank, supplier), sum)) %>% 
+  mutate(nperank=9e6, supplier="Total")
+
+tabdata <- bind_rows(tabdata3, tabsums)
+
+
+tab <- datatable(tabdata,
+          filter = 'top',
+          rownames=FALSE) %>% 
+  formatCurrency(c(3:ncol(tabdata)), digits=0)
+  # %>% formatStyle(columns = colnames(.), fontSize = '50%')
+
+
+tab
+
+
+```
+
+<!-- text</span> -->
+
+<!-- ```{css, echo=FALSE} -->
+
+<!-- p { -->
+
+<!--   font-size: 12px; -->
+
+<!-- } -->
+
+<!-- ``` -->
+
+</font> <!-- </div> --> <!-- </p> -->
+
+# Top nonprofits individually
+
+# Top departments individually
+
+# Play below here
+
+<!-- # Potential linking variables -->
+
+<!-- proposals: docsignid, agname nparties: docsignid, contractor, contype, propdate contracts: cnum, ctitle, ctype, deptcode, deptname, prime, supplier vpayments: fyear, deptcode, deptname, purchorder, supplier, voucher commodities: fyear, cnum, ctitle, purchdept, purchdeptname, supplier [note this has addresses] -->
+
+## Get nonprofits info
+
+```{r}
+#| eval: false
+#| include: false
+npe <- contracts %>%
+  filter(nonprofit=="X") %>%
+  select(supplier) %>%
+  distinct
+
+commsuppliers1 <- commodities %>%
+  select(supplier, fyear,
+         suppstreet, suppcity, suppstate, suppzip) %>%
+  distinct %>%
+  arrange(supplier)
+
+commsuppliers2 <- commsuppliers1 %>%
+  group_by(supplier) %>%
+  arrange(fyear) %>%
+  filter(fyear==last(fyear)) %>%
+  mutate(n=n()) %>%
+  ungroup
+
+commsuppliers2 %>%
+  filter(n > 1)
+
+commsuppliers3 <- 
+  commsuppliers2 %>%
+  select(supplier, suppstreet, suppcity, suppstate) %>%
+  distinct()
+
+npesuppliers <- npe %>%
+  left_join(commsuppliers3 %>%
+              mutate(commfile=TRUE),
+              by="supplier") %>%
+  mutate(commfile=ifelse(is.na(commfile), FALSE, TRUE)) %>%
+  group_by(supplier) %>%
+  mutate(n=n()) %>%
+  ungroup %>%
+  arrange(supplier)
+saveRDS(npesuppliers, here::here("data", "npesuppliers.rds"))
+
+
+```
+
+## 826 valencia
+
+```{r }
+#| eval: false
+#| include: false
+# npe <- npesuppliers %>%
+#   select(supplier) %>%
+#   distinct
+glimpse(contracts)
+valcon <- contracts %>%
+  filter(str_detect(prime, coll("826 Vale", ignore_case = TRUE)) | 
+           str_detect(supplier, coll("826 Vale", ignore_case = TRUE)))
+
+valcon %>%
+  write_csv(here::here("analysis", "valcon.csv"))
+
+
+
+glimpse(vpayments)
+
+
+
+df <- vpayments %>%
+  filter(deptcode=="CHF", supplier %in% npe$supplier)
+count(df, fyear)
+
+df2 <- df %>%
+  filter(fyear==2021)
+
+df3 <- df2 %>%
+  filter(str_detect(supplier, coll("826 Vale", ignore_case = TRUE)))
+df3 %>%
+  write_csv(here::here("analysis", "don.csv"))
+
+df2 <- df %>%
+  filter(fyear %in% 2018:2023) %>%
+  filter(str_detect(supplier, coll("826 Vale", ignore_case = TRUE)))
+
+df2 %>%
+  group_by(fyear, fcatcode, fcatname) %>%
+  summarise(vpaid=sum(vpaid))
+
+df3 %>%
+  write_csv(here::here("analysis", "don.csv"))
+
+glimpse(commodities)
+count(commodities, purchdeptcode)
+comms <- commodities %>%
+  filter(purchdept=="CHF", supplier %in% npe$supplier, fyear %in% 2018:2023)
+count(comms, fyear)
+
+comms %>%
+  filter(str_detect(supplier, coll("826 Vale", ignore_case = TRUE))) %>%
+  write_csv(here::here("analysis", "don2.csv"))
+
+# %>%  select(orggroup, progname, charname, objname, supplier)
+
+```
+
+## Get contractor information
+
+```{r coninfo1}
+#| eval: false
+#| include: false
+
+dim(proposals); dim(nparties)
+glimpse(proposals) # 211
+glimpse(nparties) # 680
+length(unique(proposals$docsignid)) # 211
+length(unique(nparties$docsignid)) # 209
+bad <- proposals %>%
+  filter(!docsignid %in% unique(nparties$docsignid))
+bad %>%
+  select(docsignid, agname, nature, sdate)
+# ok, not a problem
+
+parties1 <- nparties %>%
+  left_join(proposals, by = "docsignid")
+summary(parties1)
+length(unique(parties1$docsignid)) # 209
+
+parties1 %>%
+  group_by(docsignid) %>%
+  summarise(n=n(), .groups="drop") %>%
+  count(n)
+
+```
+
+Can we link contractors to their nonprofit status?
+
+```{r}
+#| eval: false
+#| include: false
+
+glimpse(parties1)
+count(parties1, contractor)  # nothing starts with a number
+
+glimpse(contracts)
+count(contracts, supplier) # quite a few start with a number
+
+check <- parties1 %>%
+  select(id=contractor) %>%
+  distinct() %>%
+  mutate(src="parties") %>%
+  bind_rows(contracts %>%
+              filter(nonprofit=="X") %>%
+              select(id=supplier) %>%
+              distinct() %>%
+              mutate(src="contracts")) %>%
+  mutate(value=TRUE) %>%
+  pivot_wider(names_from = src) %>%
+  arrange(id)
+
+check2 <- check %>%
+  filter(contracts) %>%
+  select(id)
+
+
+# supplier in contracts is NOT a good match for 
+# contractor in named parties!
+
+```
+
+Can we link vendors to named parties or contracts
+
+```{r}
+#| eval: false
+#| include: false
+
+glimpse(vpayments)
+count(vpayments, supplier) # plenty start with numbers
+
+```
+
+Simple summaries
+
+```{r}
+#| eval: false
+#| include: false
+
+count(contracts, supplier)
+count(contracts, deptcode, deptname)
+
+chfc <- contracts %>%
+  filter(deptcode=="CHF", nonprofit=="X")
+
+chfv <- vpayments %>%
+  filter(deptcode=="CHF")
+
+
+s <- "826 Valencia"
+# s <- "Alive"
+check1 <- chfc %>% 
+  filter(str_detect(supplier, coll(s, ignore_case = TRUE)))
+  
+check2 <- chfv %>% 
+  filter(str_detect(supplier, coll(s, ignore_case = TRUE)),
+         fyear >= 2017)
+
+check2 %>%
+  group_by(fyear, charname, progname) %>%
+  summarise(across(c(vpaid, vpend, vpendretain),
+            sum))
+
+s1 <- chfc %>% select(supplier) %>% distinct() %>% mutate(src="contracts")
+s2 <- chfv %>% select(supplier) %>% distinct() %>% mutate(src="venpay")
+comp <- bind_rows(s1, s2) %>%
+  mutate(supplier=str_to_upper(supplier)) %>%
+  mutate(t=TRUE) %>%
+  pivot_wider(names_from = src, values_from = t) %>%
+  arrange(contracts, supplier)
+
+count(comp, contracts, venpay)
+#   contracts venpay     n
+#   <lgl>     <lgl>  <int>
+# 1 TRUE      TRUE     147
+# 2 TRUE      NA         6
+# 3 NA        TRUE     767
+
+
+comp2 <- comp %>%
+  filter(contracts & is.na(venpay)) # 6 entities
+
+comp3 <- comp %>%
+  filter(is.na(contracts) & venpay)# 767
+
+# in venpay but not contracts
+# Wiki:  The American Conservatory Theater is a major nonprofit theater company in San Francisco, California, United States, that offers the public both classical and contemporary theater productions. It also has an attached acting school. 
+
+```
+
+```{r}
+#| label: test
+#| eval: false
+#| include: false
+
+count(df2, nonprofit) # 6,293
+glimpse(df2)
+summary(df2)
+count(df2, suptype) # joint venture, prime, sub
+count(df2, lbe)
+count(df2, purchauth, sort=TRUE)  # 69
+count(df2, deptcode, deptname, sort=TRUE)
+count(df2 %>% filter(str_detect(deptname, "Children")), deptcode, deptname)
+count(df2 %>% filter(nonprofit=="X"), deptcode, deptname, sort=TRUE)
+count(df2 %>% filter(nonprofit=="X"), prime, sort=TRUE)
+count(df2 %>% filter(nonprofit=="X"), supplier, sort=TRUE)
+count(df2 %>% filter(nonprofit=="X"), lbe)
+
+df2 %>%
+  filter(str_detect(supplier, "MEDA")) %>%
+  select(supplier)
+
+tmp <- df2 %>%
+  filter(deptcode=="CHF", nonprofit=="X")
+
+
+```

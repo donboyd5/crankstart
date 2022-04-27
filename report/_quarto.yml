@@ -1,0 +1,40 @@
+project:
+  type: site
+  output-dir: docs
+  pre-render: pre_render.r
+  post-render: post_render.r
+
+toc: true
+toc-title: Contents
+number-sections: true
+bibliography: references.bib  
+
+language: 
+  title-block-author-single: "Author"
+  title-block-published: "Updated"
+
+execute:
+  cache: false
+  echo: false
+  include: false
+  
+format:
+  html:
+    css: style.css
+    toc-location: left
+    self-contained: true
+    html-math-method: katex
+  # pdf:
+  #   documentclass: report
+  #   margin-left: 30mm
+  #   margin-right: 30mm
+  #   fontsize: 14px
+  #   number-sections: false
+  #   header-includes: |
+  #     \usepackage{pdflscape}
+  #     \newcommand{\blandscape}{\begin{landscape}}
+  #     \newcommand{\elandscape}{\end{landscape}}
+  docx:
+    reference-doc: refdoc4.docx
+    highlight-style: github
+    number-sections: false
