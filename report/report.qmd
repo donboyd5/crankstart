@@ -47,6 +47,12 @@ The sections below:
 
 A companion html document provides tables on payments by all departments and nonprofit organizations, in a sortable format. That document also illustrates details from one internal agency system. An associated Excel file includes the summary tables from this report plus the detailed tables in the companion html file.
 
+<!-- ::: {.content-hidden when-format="html"} -->
+
+<!-- Will not appear in HTML. -->
+
+<!-- ::: -->
+
 <!-- <div style="page-break-after: always;"></div> -->
 
 ```{=html}
@@ -59,23 +65,44 @@ https://levelup.gitconnected.com/use-columns-adjust-margins-and-do-more-in-markd
 ```
 ## About the Data
 
-The analysis is based primarily on data maintained centrally by the city controller on payments to external organizations. It also summarizes selected centrally maintained information on contracts. Payments data provide information on actual spending in a specific time period. By contrast, contracts data provide information on planned spending that may occur over multiple years. The city will not necessarily spend the full amount of the contract.
-
-Individual departments maintain more-detailed data on payments and contracts than data available centrally from the controller. Departments use these data for planning and management purposes.
+The analysis is based primarily on data maintained centrally by the city controller on payments to external organizations. Payments data provide information on actual spending in a specific time period.
 
 The city publishes its centrally maintained payments data through two main mechanisms. The [Open Book](https://openbook-report.sfgov.org/OBMiddleware/report.aspx) portal allows creation of user-friendly reports filtered to restrict the data to specific time periods, departments, and other subsets; it allows downloads of potentially large amounts of data but is not designed primarily for that purpose. The [Open Data](https://data.sfgov.org/) portal provides for bulk downloads of large data files and other information in computer-friendly formats. While the two publishing mechanisms draw on similar data, the data elements included and time periods covered may differ between *Open Book* and *Open Data*.[^2]
 
 [^2]: I brought several such differences to the attention of staff maintaining these data systems and they are working to correct them and develop greater internal consistency. As of this writing, they have not updated their data online to reflect these changes.
 
-The city publishes data on payments to external organizations in the [Vendor Payments file](https://data.sfgov.org/City-Management-and-Ethics/Vendor-Payments-Vouchers-/n9pm-xkyq) on *Open Data* and makes similar user-friendly data available through a [Supplier Payments report](https://openbook-report.sfgov.org/OBMiddleware/report.aspx?reportname=5) on *Open Book*. This is the primary source of data used in this report. The city publishes *contracts* data through the [Supplier Contracts file](https://data.sfgov.org/City-Management-and-Ethics/Supplier-Contracts/cqi5-hm2d) on *Open Data* and makes the user-friendly version available through a [Supplier Contracts report](https://openbook-report.sfgov.org/OBMiddleware/report.aspx?reportname=4) on *Open Book*. The *Open Book* version of the data is more current and is the basis for this report.
+The city publishes data on payments to external organizations in the [Vendor Payments file](https://data.sfgov.org/City-Management-and-Ethics/Vendor-Payments-Vouchers-/n9pm-xkyq) on *Open Data* and makes similar user-friendly data available through a [Supplier Payments report](https://openbook-report.sfgov.org/OBMiddleware/report.aspx?reportname=5) on *Open Book*. This is the primary source of data used in this report.
 
-In addition to data that the city maintains centrally, individual agencies maintain more-detailed data. The Department of Children, Youth and Their Families, which has significant contracts with nonprofit organizations, provided detailed information on the funding allocations they make to nonprofit organizations.
+In addition to data that the city maintains centrally, individual agencies maintain more-detailed data that they use for planning and management purposes. It was not practical in this project to obtain idiosyncratic data sets on a department-by-department basis. However, the Department of Children, Youth and Their Families, which has significant contracts with nonprofit organizations, provided detailed information on the funding allocations they make to nonprofit organizations. The appendix presents this information to illustrate the kind of supplemental information that may be available from individual departments.
+
+### Identifying payments by department
+
+The controller's data are not always precise enough to identify departments with certainty.
+
+Several city entities are structured so that most of the services are performed or arranged by an administrative department or office, and the work is overseen by a commission that typically is responsible for setting policy and for community engagement, among other responsibilities.
+
+For some of these commission-department arrangements, the controller's data identifies whether a grant payment was made by the commission or the department. For example, the data include separate entries for the Department of Children, Youth and Their Families and for the Children & Families Commission (also known as First 5 San Francisco). In these cases, the tables below show separately the payments made by the commission and the department.
+
+For other commission-department arrangements, the controller's data do not specify which entity made the payment. This is the case for the Status of Women, the Police, Recreation and Parks, and the Environment. In these cases, the tables below label payments as being made by the relevant department, as departments typically have larger budgets and deliver or arrange most of the relevant services.
+
+Finally, the controller's data lists payments by the mayor's office but does not identify which sub-office or offices made or arrange those payments. Several entities in the mayor's office appear to be responsible for arranging or delivering services, including primarily the Office of Housing and Community Development, and potentially the Office on Disability, and the Office of Neighborhood Services. In the tables below, these payments are labeled as being made by the Mayor's Office. They are likely to be associated with the Office of Housing and Community Development because this is the largest group in the mayor's office by far, and because the recipient entities generally appear to be delivering housing-related services.
+
+### Departmental budgets
+
+A table below shows payments to nonprofit organizations as a percentage of departmental budgets, for departments with the largest such payments. The denominator used in this calculation is the all-funds original budget amount for each department for the 2020-21 city fiscal year, as shown in the [*Budget and Appropriation Ordinance*](https://sfcontroller.org/sites/default/files/Documents/Budget/AAO%20FY2021-22%20%26%20FY2022-23%20-%20B%26F%20PROPOSED%20-%20FINAL%20210714.pdf) *of the Budget and Appropriations Committee, City and County of San Francisco, as of July 15, 2021*.
+
+### Nonprofit entities
 
 A nonprofit entity [as the city defines it](https://sfgov.org/cmd/sites/default/files/FileCenter/Documents/9818-NPE%20Certification.pdf) in these data must be a 501(c)(3) organization or similar entity, and must have a primary place of business that is a fixed office in San Francisco.
 
 This report focuses on grants to nonprofit organizations, rather than all payments to nonprofits.
 
+```{r notes}
+# https://sf.gov/resource/2020/budget-information-by-department
+```
+
 ```{r libraries}
+#| include: false
 source(here::here("r", "libraries.r"))
 
 # options(gt.html_tag_check = FALSE)
@@ -83,6 +110,7 @@ source(here::here("r", "libraries.r"))
 ```
 
 ```{r functions}
+#| include: false
 source(here::here("r", "functions.r"))
 
 gtsave2 <- function(tab, fpath, zoom=2, expand=5, vwidth=992, vheight=744){
@@ -101,38 +129,60 @@ gtsave2 <- function(tab, fpath, zoom=2, expand=5, vwidth=992, vheight=744){
 
 ```
 
+```{r getdata}
+#| include: false
+ #| label: getdata
+# get data and long names
+
+# San Francisco Department information
+deptinfo <- read_excel(here::here("report", "inputs", "san_francisco_inputs.xlsx"),
+                 sheet="departments",
+                 range="A2:G22")
+
+```
+
 ## City Departments with the Greatest Payments to Nonprofits
 
-The following table lists the city departments with the greatest payments to nonprofit organizations in 2020-21. The department names are presented as they are listed in the data file; in some cases, they clearly have been abbreviated.
+This section presents grant payments to nonprofit organizations by city department. A table at the end of the section describes what each department does, based on its own materials.
+
+### Departmental grant payments as percent of all grants and as a percentage of departmental budgets
+
+The following table lists the city departments with the greatest payments to nonprofit organizations in 2020-21. It shows these payments as a percentage of all nonprofit payments and as a percentage of departmental budgets.
 
 ```{r tab_topdepts}
 #| include: true
 #| rows.print: 20
 
-deptsort <- readRDS(here::here("report", "data", "deptsort.rds"))
+deptsort1 <- readRDS(here::here("report", "data", "deptsort.rds"))
+deptsort <- deptsort1 %>%
+  left_join(deptinfo, by=c("deptcode"))
 
 # define number depts and number nonprofits to include, before all other
 ndepts <- 20
 
 # create a topn data frame
 topndepts <- deptsort %>%
-  select(deptcode, trimname, paid) %>%
+  select(deptcode, longname, paid, orig_budget) %>%
   arrange(desc(paid)) %>%
   mutate(rank=ifelse(row_number() <= ndepts, row_number(), NA_real_),
          deptcode=ifelse(row_number() <= ndepts, deptcode, NA_character_),
-         trimname=ifelse(row_number() <= ndepts, trimname, "All other")) %>%
-  group_by(rank, deptcode, trimname) %>%
-  summarise(paid=sum(paid), .groups = "drop") %>%
+         longname=ifelse(row_number() <= ndepts, longname, "All other")) %>%
+  group_by(rank, deptcode, longname) %>%
+  summarise(paid=sum(paid),
+            orig_budget=first(orig_budget),
+            .groups = "drop") %>%
   mutate(paidpct=paid / sum(paid),
-         cumpct=cumsum(paidpct))
+         cumpct=cumsum(paidpct),
+         budpct=paid / orig_budget)
 
 tabsums <- topndepts %>%
   summarise(paid=sum(paid), paidpct=sum(paidpct)) %>%
   mutate(cumpct=paidpct, 
          deptcode=NA_character_,
-         trimname="Total")
+         longname="Total")
 
-tabdata <- bind_rows(topndepts, tabsums)
+tabdata <- bind_rows(topndepts, tabsums) %>%
+  select(-orig_budget)
 saveRDS(tabdata, here::here("report", "data", "topndepts.rds"))
 
 tab <- tabdata %>%
@@ -145,13 +195,14 @@ tab <- tabdata %>%
     subtitle = "Payments under grant contracts"
     ) %>%
   cols_label(rank="Rank",
-             trimname="Department" ,
+             longname="Department" ,
              paid=("Payment (dollars)"),
              paidpct=html("Percent of all grant payments"),
-             cumpct=html("Cumulative percent")) %>%
+             cumpct=html("Cumulative percent"),
+             budpct=html("Payment as % of department budget")) %>%
   cols_align(
     align = c("left"),
-    columns = trimname) %>%
+    columns = longname) %>%
   fmt_number(
     columns=c(rank, paid),
     scale_by = 1,
@@ -164,9 +215,9 @@ tab <- tabdata %>%
     decimals=0
   ) %>%
   fmt_percent(
-    columns = c(paidpct, cumpct),
+    columns = c(paidpct, cumpct, budpct),
     decimals = 1) %>%
-  fmt_missing(columns = c(rank, deptcode), missing_text = "") %>%
+  fmt_missing(columns = c(rank, deptcode, budpct), missing_text = "") %>%
   tab_style(
     style = list(
       cell_fill(color = "grey95")
@@ -391,6 +442,7 @@ gtsave2(tab, here::here("report", "images", paste0("tab_topnpe_bydept.png")),
 
 ::: {style="width: 150%; height:auto; margin: auto; font-size: 8pt;"}
 ```{r}
+#| label: all_table
 #| include: true
 #| echo: false
 # #| column: screen-inset-right
@@ -419,7 +471,6 @@ tab
 ### Department of Children, Youth and Their Families Data
 
 The table below shows grant allocations for 2020-21 and 2021-22, by program, provided by the Department of Children, Youth and Their Familes. Grant allocations provide information on expected or planned spending, rather than actual spending, and thus will differ in amounts from numbers in other tables, which are based on actual spending.
-
 
 ::: {style="width: 150%; height:auto; margin: auto; font-size: 8pt;"}
 ```{r}

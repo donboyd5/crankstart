@@ -15,6 +15,7 @@ report/report_files/
 report/docs/
 report/docs/
 results/
+~*
 *.csv
 *.docx
 *.pdf

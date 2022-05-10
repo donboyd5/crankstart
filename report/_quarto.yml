@@ -1,8 +1,8 @@
 project:
   type: site
   output-dir: ../docs
-  pre-render: pre_render.r
-  post-render: post_render.r
+  # pre-render: pre_render.r
+  # post-render: post_render.r
 
 toc: true
 toc-title: Contents
@@ -14,7 +14,7 @@ language:
   title-block-published: "Updated"
 
 execute:
-  cache: false
+  cache: true
   echo: false
   include: false
   
