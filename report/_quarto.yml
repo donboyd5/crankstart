@@ -1,6 +1,6 @@
 project:
-  type: site
-  output-dir: ../docs
+  type: website
+  output-dir: _site
   # pre-render: pre_render.r
   # post-render: post_render.r
 
@@ -14,7 +14,7 @@ language:
   title-block-published: "Updated"
 
 execute:
-  cache: true
+  cache: false
   echo: false
   include: false
   

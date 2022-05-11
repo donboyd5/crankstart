@@ -3,6 +3,7 @@ title: "Payments by the City and County of San Francisco to Nonprofit Organizati
 author: "Don Boyd, Boyd Research LLC"
 date: today
 date-format: long
+editor: visual
 ---
 
 \pagebreak
@@ -27,7 +28,7 @@ date-format: long
 
 -   The city controller's data provides very little information on the uses of these funds. However, individual city departments maintain additional information on the purposes of specific grant funds. The Department of Children, Youth and Their Families provided data on their grant funded programs. These data are included in an accompanying html file and spreadsheet to illustrate the kind of information that may be available from individual agencies.
 
-    ## Introduction
+## Introduction
 
 Nonprofit organizations play an important role in delivering services and helping the needy in San Francisco. This report presents and analyzes information on the city's payments to nonprofit organizations for the 2020-21 city fiscal year, ending June 30, 2021.[^1]
 
@@ -45,7 +46,11 @@ The sections below:
 
 -   Present selected data provided by the Department of Children, Youth and Their Families (DCYF) from its internal systems, to illustrate the kinds of additional information that may be available from agency-by-agency requests.
 
-A companion html document provides tables on payments by all departments and nonprofit organizations, in a sortable format. That document also illustrates details from one internal agency system. An associated Excel file includes the summary tables from this report plus the detailed tables in the companion html file.
+::: {.content-hidden when-format="docx"}
+An appendix provides tables on payments by all departments and nonprofit organizations, in a sortable format. That document also illustrates details from the internal DCYF agency system.
+:::
+
+An associated Excel file includes the summary tables from this report plus additional detailed tables.
 
 <!-- ::: {.content-hidden when-format="html"} -->
 
@@ -55,14 +60,6 @@ A companion html document provides tables on payments by all departments and non
 
 <!-- <div style="page-break-after: always;"></div> -->
 
-```{=html}
-<!-- 
-useful links (btw, what is a "markdown div" or html div??)
-https://stackoverflow.com/questions/50455704/full-width-markdown-tables
-https://levelup.gitconnected.com/use-columns-adjust-margins-and-do-more-in-markdown-with-these-simple-pandoc-commands-adb4c19f9f35
-
--->
-```
 ## About the Data
 
 The analysis is based primarily on data maintained centrally by the city controller on payments to external organizations. Payments data provide information on actual spending in a specific time period.
@@ -97,10 +94,6 @@ A nonprofit entity [as the city defines it](https://sfgov.org/cmd/sites/default/
 
 This report focuses on grants to nonprofit organizations, rather than all payments to nonprofits.
 
-```{r notes}
-# https://sf.gov/resource/2020/budget-information-by-department
-```
-
 ```{r libraries}
 #| include: false
 source(here::here("r", "libraries.r"))
@@ -110,10 +103,10 @@ source(here::here("r", "libraries.r"))
 ```
 
 ```{r functions}
-#| include: false
+
 source(here::here("r", "functions.r"))
 
-gtsave2 <- function(tab, fpath, zoom=2, expand=5, vwidth=992, vheight=744){
+gtsave2 <- function(tab, fpath, zoom=2, expand=5, vwidth=992, vheight=744) {
   gtlist <- list()
   gtlist$tab <- tab
   gtlist$fpath <- fpath
@@ -129,15 +122,14 @@ gtsave2 <- function(tab, fpath, zoom=2, expand=5, vwidth=992, vheight=744){
 
 ```
 
-```{r getdata}
-#| include: false
- #| label: getdata
-# get data and long names
+```{r notes}
+# https://sf.gov/resource/2020/budget-information-by-department
+```
 
-# San Francisco Department information
-deptinfo <- read_excel(here::here("report", "inputs", "san_francisco_inputs.xlsx"),
-                 sheet="departments",
-                 range="A2:G22")
+```{r }
+# useful links (btw, what is a "markdown div" or html div??)
+# https://stackoverflow.com/questions/50455704/full-width-markdown-tables
+# https://levelup.gitconnected.com/use-columns-adjust-margins-and-do-more-in-markdown-with-these-simple-pandoc-commands-adb4c19f9f35
 
 ```
 
@@ -153,9 +145,7 @@ The following table lists the city departments with the greatest payments to non
 #| include: true
 #| rows.print: 20
 
-deptsort1 <- readRDS(here::here("report", "data", "deptsort.rds"))
-deptsort <- deptsort1 %>%
-  left_join(deptinfo, by=c("deptcode"))
+deptsort <- readRDS(here::here("report", "data", "deptsort.rds"))
 
 # define number depts and number nonprofits to include, before all other
 ndepts <- 20
@@ -226,17 +216,59 @@ tab <- tabdata %>%
       rows=is.even(1:nrow(tabdata))
       )
     )
-# tab
 
 gtsave2(tab, here::here("report", "images", paste0("tab_topdepts.png")), zoom=2, expand=5)
+# tab
 
 ```
 
-![](images%5Ctab_topdepts.png){width="100%"}
+![](images/tab_topdepts.png){width="100%"}
+
+### Department descriptions
+
+It is not always obvious from a city department's name what the department actually does. The following table summarizes what each of the top departments above does; the summaries are quotes or paraphrases of information from department websites. Ar link to the source of information is given in parentheses. Some departments provide more informative descriptions of what they do than do others.
+
+```{r tab_deptservices}
+#| include: false
+tabdata <- deptsort |> 
+  filter(deptcode %in% topndepts$deptcode) |> 
+  select(longname, description) |>
+  arrange(longname)
+
+
+tab <- tabdata %>%
+  gt() %>%
+  tab_header(
+    title = "City Departments With Largest Payments to Nonprofit Organizations in 2020-21")  |> 
+  cols_label(longname="Department",
+             description="Description") %>%
+  cols_align(
+    align = c("left"),
+    columns = c(longname, description)) %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "grey95")
+      ),
+    locations = cells_body(
+      rows=is.even(1:nrow(tabdata))
+      )
+    ) %>%
+  tab_footnote(
+    footnote = "Description is either quoted, or paraphrased by the author, from department web pages.",
+    locations = cells_column_labels(
+      columns = description
+    ))
+# tab
+
+gtsave2(tab, here::here("report", "images", paste0("tab_topdepts_describe.png")), zoom=2, expand=5)
+
+```
+
+![](images/tab_topdepts_describe.png){width="100%"}
 
 ## Nonprofit Organizations That Receive the Greatest Payments
 
-The following table lists nonprofit organizations with the greatest payments from the city in 2020-21. The organization names are presented as they are listed in the data file; in some cases, they clearly have been abbreviated.
+The table below lists nonprofit organizations with the greatest payments from the city in 2020-21. The organization names are presented as they are listed in the data file; in some cases, they clearly have been abbreviated.
 
 ```{r tab_topnpes}
 #| eval: true
@@ -270,7 +302,7 @@ tab <- tabdata %>%
   gt() %>%
   tab_header(
     title = paste0("Top ",  
-                   label_comma(accuracy=1)(nnpes), 
+                   label_comma(accuracy=1)(nnpes),
                    " Nonprofit Organizations Receiving Payments in 2020-21"),
     subtitle = "Payments under grant contracts"
     ) %>%
@@ -319,7 +351,7 @@ gtsave2(tab, here::here("report", "images", paste0("tab_topnpes.png")),
 
 ```
 
-![](images%5Ctab_topnpes.png){width="100%"}
+![](images/tab_topnpes.png){width="100%"}
 
 ## NonProfit Organizations with the Largest Grant Payments, by Department
 
@@ -338,34 +370,34 @@ nnpes <- 30
 
 # create a topn data frame
 topnpesdepts <- npedeptsort %>%
-  select(trimname, supplier, paid, deptrank, nperank) %>%
+  select(longname, supplier, paid, deptrank, nperank) %>%
   mutate(deptrank=ifelse(deptrank > ndepts, 1e9, deptrank),
-         trimname=ifelse(deptrank > ndepts, "All other", trimname),
+         longname=ifelse(deptrank > ndepts, "All other", longname),
          nperank=ifelse(nperank > nnpes, 1e9, nperank),
          supplier=ifelse(nperank > nnpes, "All other", supplier)) %>%
-  group_by(deptrank, trimname, nperank, supplier) %>%
+  group_by(deptrank, longname, nperank, supplier) %>%
   summarise(paid=sum(paid), .groups = "drop")
 
 deptsums <- topnpesdepts %>%
-  group_by(trimname) %>%
+  group_by(longname) %>%
   summarise(paid=sum(paid, na.rm=TRUE), .groups="drop") %>%
   mutate(nperank=2e9, supplier="Total")
 
 npesums <- topnpesdepts %>%
   group_by(nperank, supplier) %>%
   summarise(paid=sum(paid, na.rm=TRUE), .groups="drop") %>%
-  mutate(trimname="Total")
+  mutate(longname="Total")
 
 allsums <- deptsums %>%
   summarise(paid=sum(paid, na.rm=TRUE), .groups="drop") %>%
-  mutate(nperank=2e9, supplier="Total", trimname="Total")
+  mutate(nperank=2e9, supplier="Total", longname="Total")
   
 
 tabdata_long <- bind_rows(topnpesdepts, deptsums, npesums, allsums)
 
 tabdata <- tabdata_long %>%
-  select(trimname, nperank, supplier, paid) %>%
-  pivot_wider(names_from = trimname, values_from = paid) %>%
+  select(longname, nperank, supplier, paid) %>%
+  pivot_wider(names_from = longname, values_from = paid) %>%
   arrange(nperank) %>%
   mutate(nperank=ifelse(nperank > nnpes, NA_real_, nperank))
 
@@ -429,7 +461,7 @@ gtsave2(tab, here::here("report", "images", paste0("tab_topnpe_bydept.png")),
 \blandscape
 
 ::: {.column height="200%" width="200%"}
-![](images%5Ctab_topnpe_bydept.png){height="100%" width="95%"}
+![](images/tab_topnpe_bydept.png){height="100%" width="95%"}
 :::
 
 \elandscape
@@ -440,11 +472,16 @@ gtsave2(tab, here::here("report", "images", paste0("tab_topnpe_bydept.png")),
 
 <!-- :::{style="width: 1400px; height:auto; margin: auto; font-size: 8pt;"} -->
 
-::: {style="width: 150%; height:auto; margin: auto; font-size: 8pt;"}
+<!-- ::: {style="width: 175%; height:auto; margin: auto; font-size: 8pt;"} -->
+
+::: {style="width: 175%; font-size: 8pt;"}
 ```{r}
 #| label: all_table
 #| include: true
 #| echo: false
+# #| column: screen-right
+# #| column: page
+# #| column: screen
 # #| column: screen-inset-right
 # #| column: screen-right
 
@@ -468,11 +505,11 @@ tab
 ```
 :::
 
-### Department of Children, Youth and Their Families Data
+### Data for Department of Children, Youth and Their Families
 
 The table below shows grant allocations for 2020-21 and 2021-22, by program, provided by the Department of Children, Youth and Their Familes. Grant allocations provide information on expected or planned spending, rather than actual spending, and thus will differ in amounts from numbers in other tables, which are based on actual spending.
 
-::: {style="width: 150%; height:auto; margin: auto; font-size: 8pt;"}
+::: {style="width: 175%; height:auto; margin: auto; font-size: 8pt;"}
 ```{r}
 #| include: true
 #| echo: false

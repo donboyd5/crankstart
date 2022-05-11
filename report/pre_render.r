@@ -10,6 +10,11 @@ source(here::here("r", "functions.r"))
 rcontracts <- readRDS(here::here("data", "rcontracts.rds"))
 rvpayments <- readRDS(here::here("data", "rvpayments.rds"))
 
+# # San Francisco Department information ------------------------------------
+
+deptinfo <- read_excel(here::here("report", "inputs", "san_francisco_inputs.xlsx"),
+                       sheet="departments",
+                       range="A2:G22")
 
 # conbase -----------------------------------------------------------------
 # identify contracts of interest:
@@ -32,7 +37,7 @@ conbase <- rcontracts %>%
 
 
 # paybase -----------------------------------------------------------------
-#.. individual payments to nonprofits in 2021 ----
+## individual payments to nonprofits in 2021 ----
 paybase <- rvpayments  %>% 
   filter(year==2021, nonprofit=="X", paid!=0) %>%
   left_join(conbase %>%
@@ -47,11 +52,11 @@ paybase <- rvpayments  %>%
 
 
 # deptsort ----------------------------------------------------------------
-#.. payments summarized by department ----
+## payments summarized by department ----
 # count(paybase, type, sort = TRUE)
 # count(paybase, prodcat, sort = TRUE)
 
-deptsort <- paybase %>%
+deptsort1 <- paybase %>%
   filter(grant=="grant") %>%
   group_by(deptcode, trimname, grant) %>%
   summarise(paid=sum(paid, na.rm=TRUE), .groups="drop") %>%
@@ -60,11 +65,15 @@ deptsort <- paybase %>%
          paidpct=paid / sum(paid, na.rm=TRUE),
          paidcumpct=cumsum(paidpct))
 
+deptsort <- deptsort1 |> 
+  left_join(deptinfo, by=c("deptcode")) |> 
+  mutate(longname=ifelse(is.na(longname), trimname, longname))
+
 saveRDS(deptsort, here::here("report", "data", "deptsort.rds"))
 
 
 # npesort -----------------------------------------------------------------
-#.. payments summarized by nonprofit ----
+## payments summarized by nonprofit ----
 npesort <- paybase %>%
   filter(grant=="grant") %>%
   group_by(supplier, grant) %>%
@@ -78,14 +87,14 @@ saveRDS(npesort, here::here("report", "data", "npesort.rds"))
 
 
 # npedeptsort -------------------------------------------------------------
-#.. payments summarized by nonprofit x department ----
+## payments summarized by nonprofit x department ----
 # get dept and npe ranks
 npedeptsort <- paybase %>%
   filter(grant=="grant") %>%
   group_by(deptcode, trimname, supplier, grant) %>%
   summarise(paid=sum(paid, na.rm=TRUE), .groups="drop") %>%
   left_join(deptsort %>%
-              select(deptcode, deptrank=rank), by = "deptcode") %>%
+              select(deptcode, deptrank=rank, longname), by = "deptcode") %>%
   left_join(npesort %>%
               select(supplier, nperank=rank), by = "supplier")
 
@@ -98,26 +107,26 @@ npedeptsort <- readRDS(here::here("report", "data", "npedeptsort.rds"))
 
 # add the totals
 deptsums <- npedeptsort %>%
-  group_by(trimname) %>%
+  group_by(longname) %>%
   summarise(paid=sum(paid, na.rm=TRUE), .groups="drop") %>%
   mutate(nperank=2e9, supplier="Total")
 
 npesums <- npedeptsort %>%
   group_by(nperank, supplier) %>%
   summarise(paid=sum(paid, na.rm=TRUE), .groups="drop") %>%
-  mutate(deptrank=1e9, trimname="Total")
+  mutate(deptrank=1e9, longname="Total")
 
 allsums <- deptsums %>%
   summarise(paid=sum(paid, na.rm=TRUE), .groups="drop") %>%
-  mutate(nperank=2e9, supplier="Total", trimname="Total")
+  mutate(nperank=2e9, supplier="Total", longname="Total")
 
 npedept_long <- bind_rows(npedeptsort, deptsums, npesums, allsums) %>%
-  select(nperank, supplier, deptrank, trimname, paid) %>%
+  select(nperank, supplier, deptrank, longname, paid) %>%
   arrange(deptrank, nperank)
 
 npedept_wide <- npedept_long %>%
-  select(nperank, supplier, trimname, paid) %>%
-  pivot_wider(names_from = trimname, values_from = paid) %>%
+  select(nperank, supplier, longname, paid) %>%
+  pivot_wider(names_from = longname, values_from = paid) %>%
   relocate(Total, .after = last_col()) %>%
   arrange(nperank) %>%
   mutate(nperank=ifelse(nperank==2e9, NA_real_, nperank))
