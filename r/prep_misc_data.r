@@ -141,11 +141,3 @@ saveRDS(df3, here::here("data", "commodities.rds"))
 # [21] "Encumbered Quantity"                  "Encumbered Amount"  
 
 
-# # San Francisco Department information ------------------------------------
-# df <- read_excel(here::here("report", "inputs", "san_francisco_inputs.xlsx"),
-#                  sheet="departments",
-#                  range="A2:G22")
-# saveRDS(df, here::here("report", "data", "deptinfo.rds"))
-
-
-

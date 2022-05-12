@@ -4,9 +4,12 @@ author: "Don Boyd, Boyd Research LLC"
 date: today
 date-format: long
 editor: visual
+bibliography: references.bib
 ---
 
 \pagebreak
+
+<!-- These "slash" commands are only relevant for pdf output. -->
 
 ## Highlights
 
@@ -14,9 +17,11 @@ editor: visual
 
 -   The top five departments accounted for 89 percent of grants to nonprofits. Three of these departments accounted for more than \$100 million each: Human Services (\$347 million), Homelessness Services (\$271 million), and Children, Youth and Their Families (\$110 million).
 
--   The top five nonprofit entities receiving grant payments accounted for 30.8 percent of grants.
+-   Departments heavily involved in delivery of social services to children and the needy tend to spend a large share of their budget on payments to nonprofit organizations - generally 25 percent or more. Departments that focus on administrative services and more-technical matters typically spend 5 percent or less of their budget on payments to nonprofits. There is little middle ground.
 
--   The top three nonprofit recipients of city funds were:
+-   The General Services Agency - City Administrator, which conducts centralized purchasing among other things contracted with more than 200 nonprofits, although the aggregate spending amount was relatively small. Departments involved in delivering services to children and the needy generally contracted with dozens, or even more than 100, nonprofit agencies.
+
+-   More than 540 nonprofit organizations received city funds. The top five nonprofit entities receiving grant payments accounted for 30.8 percent of grants. The top three nonprofit recipients of city funds were:
 
     -   The [Children's Council of San Francisco](https://www.childrenscouncil.org/), which focuses on supporting child care and early childhood education, received \$85 million, or 9.1 percent of the total -- the most of any nonprofit agency.
 
@@ -24,9 +29,9 @@ editor: visual
 
     -   [Episcopal Community Services of San Francisco](https://ecs-sf.org/), which provides support to homeless and very low-income people, received \$48 million (5.2 percent).
 
--   More than 540 additional nonprofit organizations received city funds.
+-   Although many nonprofits receive funding from more than one city department, most receive the vast majority of their city funds from a single department.
 
--   The city controller's data provides very little information on the uses of these funds. However, individual city departments maintain additional information on the purposes of specific grant funds. The Department of Children, Youth and Their Families provided data on their grant funded programs. These data are included in an accompanying html file and spreadsheet to illustrate the kind of information that may be available from individual agencies.
+-   The city controller's data provides very little information on the uses of these funds. However, individual city departments maintain additional information on the purposes of specific grant funds. The Department of Children, Youth and Their Families provided data on their grant funded programs and are available in several forms, as discussed below.
 
 ## Introduction
 
@@ -44,55 +49,61 @@ The sections below:
 
 -   Present a cross-tabulation of payments to major nonprofit organizations by major city departments.
 
--   Present selected data provided by the Department of Children, Youth and Their Families (DCYF) from its internal systems, to illustrate the kinds of additional information that may be available from agency-by-agency requests.
-
-::: {.content-hidden when-format="docx"}
-An appendix provides tables on payments by all departments and nonprofit organizations, in a sortable format. That document also illustrates details from the internal DCYF agency system.
+::: {.content-hidden unless-format="html"}
+The appendix provides tables on payments by all departments and nonprofit organizations, in a sortable format. The appendix also presents data from the Department of Children, Youth, and Their Families (DCYF) as an example of the level of detail that may be available in individual departmental data systems.
 :::
 
-An associated Excel file includes the summary tables from this report plus additional detailed tables.
+::: {.content-hidden unless-format="docx"}
+A companion html file has an appendix that provides tables on payments by all departments and nonprofit organizations, in a sortable format. That document also presents data from the Department of Children, Youth, and Their Families (DCYF) as an example of the level of detail that may be available in individual departmental data systems.
+:::
 
-<!-- ::: {.content-hidden when-format="html"} -->
-
-<!-- Will not appear in HTML. -->
-
-<!-- ::: -->
+An associated Excel file includes the summary tables from this report plus detailed tables.
 
 <!-- <div style="page-break-after: always;"></div> -->
 
 ## About the Data
 
-The analysis is based primarily on data maintained centrally by the city controller on payments to external organizations. Payments data provide information on actual spending in a specific time period.
+The analysis is based primarily on data maintained centrally by the city controller on payments to external organizations. Payments data provide information on actual spending in a specific time period, as opposed to budgeted (i.e., planned) spending, and as opposed to contract amounts, which may be spent over multiple years and may never be fully spent.
 
-The city publishes its centrally maintained payments data through two main mechanisms. The [Open Book](https://openbook-report.sfgov.org/OBMiddleware/report.aspx) portal allows creation of user-friendly reports filtered to restrict the data to specific time periods, departments, and other subsets; it allows downloads of potentially large amounts of data but is not designed primarily for that purpose. The [Open Data](https://data.sfgov.org/) portal provides for bulk downloads of large data files and other information in computer-friendly formats. While the two publishing mechanisms draw on similar data, the data elements included and time periods covered may differ between *Open Book* and *Open Data*.[^2]
+The city publishes its centrally maintained payments data through two main mechanisms. The [Open Book](https://openbook-report.sfgov.org/OBMiddleware/report.aspx) portal allows creation of user-friendly reports filtered to restrict the data to specific time periods, departments, and other subsets; it allows downloads of potentially large amounts of data but is not designed primarily for that purpose. The [Open Data](https://data.sfgov.org/) portal provides for bulk downloads of large data files and other information in computer-friendly formats. While the two publishing mechanisms draw on similar data, the data elements included and time periods covered may differ between Open Book and Open Data.[^2]
 
 [^2]: I brought several such differences to the attention of staff maintaining these data systems and they are working to correct them and develop greater internal consistency. As of this writing, they have not updated their data online to reflect these changes.
 
-The city publishes data on payments to external organizations in the [Vendor Payments file](https://data.sfgov.org/City-Management-and-Ethics/Vendor-Payments-Vouchers-/n9pm-xkyq) on *Open Data* and makes similar user-friendly data available through a [Supplier Payments report](https://openbook-report.sfgov.org/OBMiddleware/report.aspx?reportname=5) on *Open Book*. This is the primary source of data used in this report.
+The city publishes data on payments to external organizations in the [Vendor Payments file](https://data.sfgov.org/City-Management-and-Ethics/Vendor-Payments-Vouchers-/n9pm-xkyq) on Open Data and makes similar user-friendly data available through a [Supplier Payments report](https://openbook-report.sfgov.org/OBMiddleware/report.aspx?reportname=5) on Open Book. This latter file is the primary source of data used in this report.
 
-In addition to data that the city maintains centrally, individual agencies maintain more-detailed data that they use for planning and management purposes. It was not practical in this project to obtain idiosyncratic data sets on a department-by-department basis. However, the Department of Children, Youth and Their Families, which has significant contracts with nonprofit organizations, provided detailed information on the funding allocations they make to nonprofit organizations. The appendix presents this information to illustrate the kind of supplemental information that may be available from individual departments.
+In addition to data that the city maintains centrally, individual departments maintain more-detailed data that they use for planning and management purposes. These data differ in content and format from department to department, and may not exist in all departments. It was not practical in this project to obtain idiosyncratic data sets on a department-by-department basis.
+
+However, the Department of Children, Youth and Their Families, which has significant contracts with nonprofit organizations, provided detailed information on the funding allocations they make to nonprofit organizations.
+
+::: {.content-hidden unless-format="html"}
+As noted above, the appendix presents these data from the DCYF departmental data system.
+:::
+
+::: {.content-hidden unless-format="docx"}
+As noted above, a companion html file has an appendix that presents these data from the DCYF departmental data system.
+:::
 
 ### Identifying payments by department
 
-The controller's data are not always precise enough to identify departments with certainty.
+The controller's system of labeling payments is not always precise enough to identify with certainty the entity that made payments to nonprofits. This is especially true for departments that have associated commissions, and for the mayor's office.
 
-Several city entities are structured so that most of the services are performed or arranged by an administrative department or office, and the work is overseen by a commission that typically is responsible for setting policy and for community engagement, among other responsibilities.
+Several city activities are structured so that a *commission* sets policy, oversees operations, and takes the lead in community engagement, while most services are performed or arranged by a *department or office*. For example, the Recreation and Parks Department is overseen and governed by the Recreation and Parks Commission, which has seven members appointed by the mayor. Both the commission and the department may make payments to nonprofits, although typically payments by the latter are larger and more numerous.
 
-For some of these commission-department arrangements, the controller's data identifies whether a grant payment was made by the commission or the department. For example, the data include separate entries for the Department of Children, Youth and Their Families and for the Children & Families Commission (also known as First 5 San Francisco). In these cases, the tables below show separately the payments made by the commission and the department.
+For some of these commission-department arrangements, the controller's data identifies whether a grant payment was made by the commission or the department. For example, the data include separate entries for the Department of Children, Youth and Their Families and for the Children & Families Commission (also known as First 5 San Francisco). In this case, there is no uncertainty about which organization made a payment and the tables below show separate payments made by the commission and the department.
 
-For other commission-department arrangements, the controller's data do not specify which entity made the payment. This is the case for the Status of Women, the Police, Recreation and Parks, and the Environment. In these cases, the tables below label payments as being made by the relevant department, as departments typically have larger budgets and deliver or arrange most of the relevant services.
+For other commission-department arrangements, the controller's data do not specify which entity made the payment. This is the case for the Status of Women, the Police, Recreation and Parks, and the Environment. In these cases, the tables below *assume* payments were made by the department rather than the commission, as departments typically have larger budgets and deliver or arrange most of the relevant services.
 
-Finally, the controller's data lists payments by the mayor's office but does not identify which sub-office or offices made or arrange those payments. Several entities in the mayor's office appear to be responsible for arranging or delivering services, including primarily the Office of Housing and Community Development, and potentially the Office on Disability, and the Office of Neighborhood Services. In the tables below, these payments are labeled as being made by the Mayor's Office. They are likely to be associated with the Office of Housing and Community Development because this is the largest group in the mayor's office by far, and because the recipient entities generally appear to be delivering housing-related services.
+A second area of uncertainty relates to the Mayor's Office. The controller's data lists payments by the Mayor's Office but does not identify which sub-office or offices made or arranged those payments. Several entities in the Mayor's Office appear to be responsible for arranging or delivering services, including primarily the Office of Housing and Community Development, and potentially the Office on Disability, and the Office of Neighborhood Services. Approximately 95 percent of the budget for the Mayor's Office is listed under the heading of housing and community development (\$197.0 million out of \$206.3 million in 2020-21). Most of the nonprofit organizations receiving payments from the Mayor's Office appear, judging by their names, to be related to housing and community development. The tables below do not attribute payments from the Mayor's Office to individual sub-offices, but it is reasonable to assume that they are associated with the Office of Housing and Community Development.
 
 ### Departmental budgets
 
-A table below shows payments to nonprofit organizations as a percentage of departmental budgets, for departments with the largest such payments. The denominator used in this calculation is the all-funds original budget amount for each department for the 2020-21 city fiscal year, as shown in the [*Budget and Appropriation Ordinance*](https://sfcontroller.org/sites/default/files/Documents/Budget/AAO%20FY2021-22%20%26%20FY2022-23%20-%20B%26F%20PROPOSED%20-%20FINAL%20210714.pdf) *of the Budget and Appropriations Committee, City and County of San Francisco, as of July 15, 2021*.
+A table below shows payments to nonprofit organizations as a percentage of departmental budgets, for departments with the largest such payments. The denominator used in this calculation is the all-funds original budget amount for each department for the 2020-21 city fiscal year [@sanfranciscocitycontroller2021].
 
 ### Nonprofit entities
 
-A nonprofit entity [as the city defines it](https://sfgov.org/cmd/sites/default/files/FileCenter/Documents/9818-NPE%20Certification.pdf) in these data must be a 501(c)(3) organization or similar entity, and must have a primary place of business that is a fixed office in San Francisco.
+A nonprofit entity, as defined in these data, must be a 501(c)(3) organization or similar entity and must have a primary place of business that is a fixed office in San Francisco [@contactmonitoringdivision2022].
 
-This report focuses on grants to nonprofit organizations, rather than all payments to nonprofits.
+This report focuses on *grants* to nonprofit organizations, rather than all payments to nonprofits.
 
 ```{r libraries}
 #| include: false
@@ -135,20 +146,26 @@ gtsave2 <- function(tab, fpath, zoom=2, expand=5, vwidth=992, vheight=744) {
 
 ## City Departments with the Greatest Payments to Nonprofits
 
-This section presents grant payments to nonprofit organizations by city department. A table at the end of the section describes what each department does, based on its own materials.
+This section presents grant payments to nonprofit organizations by city department. A table at the end of the section describes what each department with significant payments to nonprofits does, based on materials posted on the department website.
 
 ### Departmental grant payments as percent of all grants and as a percentage of departmental budgets
 
-The following table lists the city departments with the greatest payments to nonprofit organizations in 2020-21. It shows these payments as a percentage of all nonprofit payments and as a percentage of departmental budgets.
+The following table lists the city departments with the greatest payments to nonprofit organizations in 2020-21. It shows these payments as a percentage of all nonprofit payments citywide and as a percentage of each department's budget.
 
-```{r tab_topdepts}
-#| include: true
-#| rows.print: 20
+Departments heavily involved in delivery of social services to children and the needy tend to spend a large share of their budget on payments to nonprofit organizations - generally 25 percent or more. Departments that focus on administrative services and more-technical matters typically spend 5 percent or less of their budget on payments to nonprofits. There is little middle ground (excepting, perhaps, the Human Rights Commission).
 
+```{r}
 deptsort <- readRDS(here::here("report", "data", "deptsort.rds"))
 
 # define number depts and number nonprofits to include, before all other
 ndepts <- 20
+
+
+```
+
+```{r tab_topdepts}
+#| include: true
+#| rows.print: 20
 
 # create a topn data frame
 topndepts <- deptsort %>%
@@ -224,9 +241,67 @@ gtsave2(tab, here::here("report", "images", paste0("tab_topdepts.png")), zoom=2,
 
 ![](images/tab_topdepts.png){width="100%"}
 
+### Number of nonprofit recipients by department
+
+The following table shows the number of nonprofit recipients for each major department, the total amount paid to nonprofits, the amount paid to the nonprofit organization receiving the largest amount, and the largest amount as a percentage of all of the department's nonprofit payments. The General Services Agency - City Administrator, which conducts centralized purchasing among other things contracted with more than 200 nonprofits, although the aggregate spending amount was relatively small. Departments involved in delivering services to children and the needy generally contracted with dozens, or even more than 100, nonprofit agencies.
+
+```{r tab_deptnnpe}
+#| include: true
+tabdata <- deptsort |> 
+  filter(deptcode %in% topndepts$deptcode) |> 
+  select(rank, deptcode, longname, nna, paid, maxnpe, maxnpepct)
+
+tab <- tabdata %>%
+  gt() %>%
+  tab_header(
+    title = paste0("Top ",  
+                   label_comma(accuracy=1)(ndepts), 
+                   " City Departments, Number and concentration of nonprofit recipents"),
+    subtitle = "Payments under grant contracts"
+    ) %>%
+  cols_label(rank="Rank",
+             deptcode="Department code",
+             longname="Department" ,
+             nna="Number of nonprofit recipients",
+             paid=("Payment (dollars)"),
+             maxnpe=html("Largest amount paid to a nonprofit recipient"),
+             maxnpepct=html("Largest amount as percent of department's payments to nonprofits")) %>%
+  cols_align(
+    align = c("left"),
+    columns = longname) %>%
+  fmt_number(
+    columns=c(rank, nna, paid, maxnpe),
+    scale_by = 1,
+    decimals=0
+  ) %>%
+  fmt_currency(
+    rows=c(1, nrow(tabdata)),
+    columns=c(paid, maxnpe),
+    scale_by = 1,
+    decimals=0
+  ) %>%
+  fmt_percent(
+    columns = c(maxnpepct),
+    decimals = 1) %>%
+  fmt_missing(columns = c(rank, maxnpepct), missing_text = "") %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "grey95")
+      ),
+    locations = cells_body(
+      rows=is.even(1:nrow(tabdata))
+      )
+    )
+
+gtsave2(tab, here::here("report", "images", paste0("tab_deptnnpe.png")), zoom=2, expand=5)
+
+```
+
+![](images/tab_deptnnpe.png){width="100%"}
+
 ### Department descriptions
 
-It is not always obvious from a city department's name what the department actually does. The following table summarizes what each of the top departments above does; the summaries are quotes or paraphrases of information from department websites. Ar link to the source of information is given in parentheses. Some departments provide more informative descriptions of what they do than do others.
+It is not always obvious from a city department's name what the department actually does. The following table summarizes what each of the departments above does; the summaries are quotes or paraphrases of information from department websites. Links to source information are given in parentheses.
 
 ```{r tab_deptservices}
 #| include: false
@@ -353,6 +428,63 @@ gtsave2(tab, here::here("report", "images", paste0("tab_topnpes.png")),
 
 ![](images/tab_topnpes.png){width="100%"}
 
+### Number of departments by nonprofit recipient
+
+The following table shows the number of departments that each major nonprofit received payments from, the total amount it received from city departments, the amount received from the department that paid it the largest amount, and the largest amount as a percentage of all city payments to the nonprofit. Although many nonprofits receive funding from more than one city department, most receive the vast majority of their city funds from a single department.
+
+```{r tab_npendept}
+#| include: true
+tabdata <- npesort |> 
+  filter(supplier %in% topnpes$supplier) |> 
+  select(rank, supplier, nna, paid, maxdept, maxdeptpct)
+
+tab <- tabdata %>%
+  gt() %>%
+  tab_header(
+    title = paste0("Top ",  
+                   label_comma(accuracy=1)(nnpes), 
+                   " Nonprofit recipients, Number and concentration of department payors"),
+    subtitle = "Payments under grant contracts"
+    ) %>%
+  cols_label(rank="Rank",
+             supplier="Nonprofit entity" ,
+             nna="Number of department payors",
+             paid=("Payment (dollars)"),
+             maxdept=html("Largest amount paid by a department"),
+             maxdeptpct=html("Largest amount as percent of nonprofit's payments from departments")) %>%
+  cols_align(
+    align = c("left"),
+    columns = supplier) %>%
+  fmt_number(
+    columns=c(rank, nna, paid, maxdept),
+    scale_by = 1,
+    decimals=0
+  ) %>%
+  fmt_currency(
+    rows=c(1, nrow(tabdata)),
+    columns=c(paid, maxdept),
+    scale_by = 1,
+    decimals=0
+  ) %>%
+  fmt_percent(
+    columns = c(maxdeptpct),
+    decimals = 1) %>%
+  fmt_missing(columns = c(rank, maxdeptpct), missing_text = "") %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "grey95")
+      ),
+    locations = cells_body(
+      rows=is.even(1:nrow(tabdata))
+      )
+    )
+
+gtsave2(tab, here::here("report", "images", paste0("tab_npendept.png")), zoom=2, expand=5)
+
+```
+
+![](images/tab_npendept.png){width="100%"}
+
 ## NonProfit Organizations with the Largest Grant Payments, by Department
 
 ```{r tab_topnpe_bydept}
@@ -445,18 +577,16 @@ tab <- tabdata %>%
 gtsave2(tab, here::here("report", "images", paste0("tab_topnpe_bydept.png")),
          zoom=1, expand=5, vwidth=4000)
 
-# f <- label_number(accuracy=.1)
-# f(12.3216)
-# label_number(accuracy=.1)(12.32)
-# label_comma(accuracy=.1)(124567.32)
-# quarto render --cache-refresh --to html
-#  !(images/tab_topnpes.png)
-
-# zoom=2, expand=5
-# vwidth = 992,
-# vheight = 744,
 
 ```
+
+The table below shows payments by department and nonprofit organization, for the largest of each. (A separate table provides details on all departments and all nonprofit organizations.)
+
+You had asked, in particular, about the \$1.5 million payment from the Mayor's Office to Tenderloin Housing Clinic, Inc., as part of a more-general question about why the Mayor's Office is funding specific programs.
+
+I briefly described the structure of the Mayor's Office in the "About the Data" section. As to why the Office of Community and Housing Development (MOHCD) is in the Mayor's Office rather than being a freestanding department, I don't know. I didn't find a written history of the department and I didn't find a law establishing it. It is not a separately established office in [Article IV of the city charter](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_charter/0-0-0-163). Nonetheless, references to the office are scattered throughout the charter and in separate ordinances, with no central section I could find that discusses its creation or responsibilities. One possibility is that some prior mayor decided that housing issues were so important that he or she wanted an agency that reported directly to the mayor, and did not want to go through the challenges of amending the city charter, and therefore established the office administratively. But that's just one possibility.
+
+As for the \$1.5 million payment to Tenderloin Housing Clinic, Inc. (THC), you can see on the MOHD website that it works extensively with community partners, and lists THC as one of its [partner Community Development Grantees](https://sfmohcd.org/current-partners), along with several other organizations that appear in the table below. THC [provides tenant protection services](https://www.thclinic.org/about/mission.php) and appears to fall into the core mission of MOHCD.
 
 \blandscape
 
@@ -466,6 +596,13 @@ gtsave2(tab, here::here("report", "images", paste0("tab_topnpe_bydept.png")),
 
 \elandscape
 
+::: {.content-hidden unless-format="docx"}
+<!-- In the word doc, move footnotes to endnotes  -->
+
+## Endnotes
+:::
+
+::: {.content-hidden when-format="docx"}
 ## Appendix
 
 ### All Nonprofit Organizations and All Departments
@@ -498,7 +635,8 @@ tab <- datatable(tabdata,
                               columnDefs = list(
                                 list(width = '220px', targets = 1)))
                  ) %>% 
-  formatCurrency(c(3:ncol(tabdata)), digits=0)
+  formatCurrency(c(3:(ncol(tabdata) - 1)), digits=0) %>%
+  formatPercentage(ncol(tabdata), digits=1)
 
 tab
 
@@ -507,7 +645,7 @@ tab
 
 ### Data for Department of Children, Youth and Their Families
 
-The table below shows grant allocations for 2020-21 and 2021-22, by program, provided by the Department of Children, Youth and Their Familes. Grant allocations provide information on expected or planned spending, rather than actual spending, and thus will differ in amounts from numbers in other tables, which are based on actual spending.
+The table below shows grant allocations for 2020-21 and 2021-22, by program, provided by the Department of Children, Youth and Their Families. Grant allocations provide information on expected or planned spending, rather than actual spending, and thus will differ in amounts from numbers in other tables, which are based on actual spending.
 
 ::: {style="width: 175%; height:auto; margin: auto; font-size: 8pt;"}
 ```{r}
@@ -539,4 +677,54 @@ tab
 ```
 :::
 
-<!-- </div> -->
+## Homelessness Department over time
+
+You asked about payments by the Homelessness Department over time. Because the focus of this project was on a single recent year, I have not investigated the data for anomalies and I suggest using the following table with caution. However, it is an accurate summary of the city controller's data for city fiscal year 2017-18 (labeled as 2018) through city fiscal year 2020-21 and does show the significant growth in spending by this department.
+
+```{r tab_homeless_overtime}
+#| include: true
+
+homeless <- readRDS(here::here("report", "data", "homeless.rds"))
+
+tabdata <- homeless %>%
+  group_by(year) %>%
+  summarise(nusup=length(unique(supplier)), paid=sum(paid, na.rm=TRUE))
+
+tab <- tabdata %>%
+  gt() %>%
+  tab_header(
+    title = paste0("Experimental analysis: Homelessness Department payments to nonprofit entities over time"),
+    subtitle = "Payments under grant contracts"
+    ) %>%
+  cols_label(year="City fiscal year ending in:",
+             nusup="Number of nonprofit recipients") %>%
+  cols_align(
+    align = c("left"),
+    columns = year) %>%
+  fmt_number(
+    columns=c(nusup, paid),
+    scale_by = 1,
+    decimals=0
+  ) %>%
+  fmt_currency(
+    rows=c(1, nrow(tabdata)),
+    columns=paid,
+    scale_by = 1,
+    decimals=0
+  ) %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "grey95")
+      ),
+    locations = cells_body(
+      rows=is.even(1:nrow(tabdata))
+      )
+    )
+
+gtsave2(tab, here::here("report", "images", paste0("tab_homeless_overtime.png")),
+         zoom=1, expand=5, vwidth=4000)
+
+```
+
+![](images/tab_homeless_overtime.png){width="100%"}
+:::

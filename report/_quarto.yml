@@ -6,8 +6,9 @@ project:
 
 toc: true
 toc-title: Contents
-number-sections: true
-bibliography: references.bib  
+bibliography: references.bib
+# references.bib  
+# _Bibliography.bib
 
 language: 
   title-block-author-single: "Author"
@@ -22,7 +23,9 @@ format:
   html:
     css: style.css
     toc-location: left
-    self-contained: true
+    toc-depth: 3
+    number-sections: true
+    # self-contained: true
     html-math-method: katex
   # pdf:
   #   documentclass: report
@@ -35,6 +38,6 @@ format:
   #     \newcommand{\blandscape}{\begin{landscape}}
   #     \newcommand{\elandscape}{\end{landscape}}
   docx:
-    reference-doc: refdoc4.docx
+    reference-doc: refdoc.docx
     highlight-style: github
     number-sections: false

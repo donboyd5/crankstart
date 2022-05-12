@@ -11,7 +11,8 @@ outpath <- here::here("report", "results", "nonprofits.xlsx")
 # functions ---------------------------------------------------------------
 
 top_sheet <- function(wb, data, sname, first_data_row,
-                      comma_cols, dollar_cols, pct_cols){
+                      comma_cols, dollar_cols, pct_cols,
+                      total_format=TRUE){
   last_data_row <- nrow(data) + first_data_row - 1
   totalrow <- last_data_row
   last_col <- ncol(data)
@@ -22,10 +23,14 @@ top_sheet <- function(wb, data, sname, first_data_row,
   # apply styles
   addStyle(wb, sheet = sname, style = num0, rows=first_data_row:last_data_row, cols = comma_cols, gridExpand = TRUE)
   addStyle(wb, sheet = sname, style = pct1, rows=first_data_row:last_data_row, cols = pct_cols, gridExpand = TRUE)
-  addStyle(wb, sheet = sname, style = curr0, rows=c(first_data_row, last_data_row), cols = dollar_cols)
+  addStyle(wb, sheet = sname, style = curr0, rows=first_data_row, cols = dollar_cols)
   
-  addStyle(wb, sheet = sname, style = curr0, rows=totalrow, cols = dollar_cols, stack=TRUE)
-  addStyle(wb, sheet = sname, style = totstyle, rows = totalrow, cols = 1:last_col, stack=TRUE)
+  if(total_format){
+    # addStyle(wb, sheet = sname, style = curr0, rows=last_data_row, cols = dollar_cols)
+    addStyle(wb, sheet = sname, style = curr0, rows=totalrow, cols = dollar_cols, stack=TRUE)
+    addStyle(wb, sheet = sname, style = totstyle, rows = totalrow, cols = 1:last_col, stack=TRUE)
+  }
+  
   wb
 }
 
@@ -140,13 +145,40 @@ modifyBaseFont(wb, fontSize = 12, fontColour = "black", fontName = "Calibri")
 topndepts <- readRDS(here::here("report", "data", "topndepts.rds"))
 # names(topndepts)
 wb <- top_sheet(wb, topndepts, "top_departments", first_data_row=8,
-                comma_cols=4, dollar_cols=4, pct_cols=5:6)
+                comma_cols=4, dollar_cols=4, pct_cols=5:7)
+
+
+# department - nonprofit shares --------------------------------------------
+# dept_nonprofit_shares
+deptsort <- readRDS(here::here("report", "data", "deptsort.rds"))
+
+deptshares <- deptsort |> 
+  filter(deptcode %in% topndepts$deptcode) |> 
+  select(rank, deptcode, longname, nna, paid, maxnpe, maxnpepct)
+
+wb <- top_sheet(wb, deptshares, "dept_nonprofitshares", first_data_row=8,
+                comma_cols=4:6, dollar_cols=5:6, pct_cols=7,
+                total_format = FALSE)
+
 
 # top nonprofits ----------------------------------------------------------
 topnpes <- readRDS(here::here("report", "data", "topnpes.rds"))
 names(topnpes)
 wb <- top_sheet(wb, topnpes, "top_nonprofits", first_data_row=8,
                 comma_cols=3, dollar_cols=3, pct_cols=4:5)
+
+
+# nonprofits - department shares --------------------------------------------
+# nonprofit_deptshares
+npesort <- readRDS(here::here("report", "data", "npesort.rds"))
+
+npeshares <- npesort |> 
+  filter(supplier %in% topnpes$supplier) |> 
+  select(rank, supplier, nna, paid, maxdept, maxdeptpct)
+
+wb <- top_sheet(wb, npeshares, "nonprofit_deptshares", first_data_row=8,
+                comma_cols=3:5, dollar_cols=4:5, pct_cols=6,
+                total_format = FALSE)
 
 
 # top nonprofits by top departments ---------------------------------------
